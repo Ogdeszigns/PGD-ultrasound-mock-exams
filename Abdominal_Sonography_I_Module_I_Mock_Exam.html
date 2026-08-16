@@ -514,6 +514,24 @@
             SUPABASE_URL,
             SUPABASE_PUBLISHABLE_KEY
         );
+  supabaseClient
+    .from("quiz_attempts")
+    .select("id")
+    .limit(1)
+    .then(({ data, error }) => {
+
+        if (error) {
+            console.error(
+                "Supabase connection test failed:",
+                error
+            );
+        } else {
+            console.log(
+                "Supabase connection successful."
+            );
+        }
+
+    });
 </script>
 </script>
 </body>
