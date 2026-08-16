@@ -412,6 +412,8 @@
 
   function startExam(){
     state.started = true;
+    state.startedAt = new Date();
+
     startScreen.style.display = 'none';
     quizScreen.style.display = 'block';
     buildPalette();
@@ -419,7 +421,7 @@
     updateProgress();
     timerEl.textContent = fmtTime(state.remaining);
     state.timerHandle = setInterval(tick, 1000);
-  }
+}
 
   function finishExam(auto){
     if(state.finished) return;
