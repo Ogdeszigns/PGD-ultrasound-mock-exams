@@ -282,13 +282,14 @@
   var TOTAL_SECONDS = 90 * 60;
   var LETTERS = ['A','B','C','D'];
 
-  var state = {
+ var state = {
     answers: new Array(DATA.length).fill(null),
     remaining: TOTAL_SECONDS,
     timerHandle: null,
     started: false,
     finished: false,
-    startedAt: null
+    startedAt: null,
+    completedAt: null
 };
 
   var startScreen = document.getElementById('startScreen');
@@ -470,9 +471,11 @@
       }
     }
     state.finished = true;
-    clearInterval(state.timerHandle);
-    quizScreen.style.display = 'none';
-    showResults(auto);
+state.completedAt = new Date();
+
+clearInterval(state.timerHandle);
+quizScreen.style.display = 'none';
+showResults(auto);
   }
 
   function showResults(timedOut){
