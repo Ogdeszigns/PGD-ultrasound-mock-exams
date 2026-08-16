@@ -9,252 +9,343 @@
   <style>
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       background: #f4f7fb;
-      color: #1f2937;
+      color: #172033;
     }
 
-    .header {
-      background: #0f2a43;
+    /* =========================
+       LOGIN
+    ========================= */
+
+    #loginPanel {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #062b4c, #0b5c8e);
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      padding: 40px;
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+
+    .login-box h1 {
+      color: #073b63;
+      margin-bottom: 8px;
+      font-size: 25px;
+    }
+
+    .login-box h2 {
+      color: #555;
+      font-size: 17px;
+      font-weight: normal;
+      margin-bottom: 28px;
+    }
+
+    .login-box label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #ccd5df;
+      border-radius: 8px;
+      margin-bottom: 18px;
+      font-size: 15px;
+    }
+
+    .login-box input:focus {
+      outline: none;
+      border-color: #0879b9;
+      box-shadow: 0 0 0 3px rgba(8,121,185,0.12);
+    }
+
+    #loginBtn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: #0879b9;
       color: white;
-      padding: 22px 30px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #loginBtn:hover {
+      background: #065f92;
+    }
+
+    #loginMessage {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    /* =========================
+       DASHBOARD
+    ========================= */
+
+    #adminDashboard {
+      display: none;
+    }
+
+    .topbar {
+      background: #073b63;
+      color: white;
+      padding: 18px 30px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 20px;
     }
 
-    .header h1 {
-      margin: 0;
-      font-size: 24px;
+    .topbar h1 {
+      font-size: 22px;
     }
 
-    .header p {
-      margin: 5px 0 0;
+    .topbar p {
+      font-size: 13px;
       opacity: 0.8;
-      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    #logoutBtn {
+      background: #ffffff;
+      color: #073b63;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 7px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #logoutBtn:hover {
+      background: #e8f0f6;
     }
 
     .container {
       max-width: 1500px;
-      margin: 30px auto;
-      padding: 0 20px;
+      margin: auto;
+      padding: 30px;
     }
 
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 25px;
-      margin-bottom: 25px;
-      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.07);
-    }
-
-    .login-card {
-      max-width: 450px;
-      margin: 70px auto;
-    }
-
-    h2 {
-      margin-top: 0;
-      color: #0f2a43;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px 14px;
-      margin: 8px 0;
-      border: 1px solid #cbd5e1;
-      border-radius: 7px;
-      font-size: 15px;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: #2563eb;
-    }
-
-    button {
-      border: none;
-      border-radius: 7px;
-      padding: 11px 18px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .primary-btn {
-      background: #2563eb;
-      color: white;
-    }
-
-    .primary-btn:hover {
-      background: #1d4ed8;
-    }
-
-    .secondary-btn {
-      background: #e2e8f0;
-      color: #1e293b;
-    }
-
-    .secondary-btn:hover {
-      background: #cbd5e1;
-    }
-
-    .danger-btn {
-      background: #dc2626;
-      color: white;
-    }
-
-    .danger-btn:hover {
-      background: #b91c1c;
-    }
-
-    .login-btn {
-      width: 100%;
-      margin-top: 12px;
-    }
-
-    .toolbar {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
-    .toolbar input {
-      flex: 1;
-      min-width: 250px;
-      margin: 0;
-    }
-
-    .status {
-      margin-top: 12px;
-      font-size: 14px;
-    }
-
-    .success {
-      color: #15803d;
-    }
-
-    .error {
-      color: #dc2626;
-    }
-
-    .loading {
-      color: #2563eb;
-    }
+    /* =========================
+       STAT CARDS
+    ========================= */
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
-      margin-bottom: 25px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 30px;
     }
 
     .stat-card {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 18px;
+      background: white;
+      padding: 22px;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+      border-left: 5px solid #0879b9;
     }
 
-    .stat-card small {
-      display: block;
-      color: #64748b;
-      margin-bottom: 5px;
+    .stat-card h3 {
+      font-size: 13px;
+      color: #687586;
+      margin-bottom: 10px;
+      text-transform: uppercase;
     }
 
-    .stat-card strong {
-      font-size: 26px;
-      color: #0f2a43;
+    .stat-card .number {
+      font-size: 30px;
+      font-weight: bold;
+      color: #073b63;
+    }
+
+    /* =========================
+       RESULTS PANEL
+    ========================= */
+
+    .results-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+
+    .results-header {
+      padding: 22px 25px;
+      border-bottom: 1px solid #e5e9ee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .results-header h2 {
+      color: #073b63;
+      font-size: 20px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    #searchInput,
+    #statusFilter {
+      padding: 10px 12px;
+      border: 1px solid #ccd5df;
+      border-radius: 7px;
+      font-size: 14px;
+    }
+
+    #searchInput {
+      width: 250px;
+    }
+
+    #refreshBtn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 7px;
+      background: #0879b9;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #refreshBtn:hover {
+      background: #065f92;
     }
 
     .table-wrapper {
       width: 100%;
       overflow-x: auto;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       min-width: 1100px;
-      background: white;
     }
 
     th {
-      background: #0f2a43;
-      color: white;
-      padding: 13px 10px;
+      background: #f0f4f8;
+      color: #465466;
       text-align: left;
+      font-size: 12px;
+      text-transform: uppercase;
+      padding: 14px;
       white-space: nowrap;
-      font-size: 13px;
     }
 
     td {
-      padding: 12px 10px;
-      border-bottom: 1px solid #e2e8f0;
-      font-size: 13px;
+      padding: 14px;
+      border-top: 1px solid #edf0f3;
+      font-size: 14px;
       white-space: nowrap;
     }
 
     tbody tr:hover {
-      background: #f8fafc;
+      background: #f8fbfd;
     }
 
     .pass {
-      color: #15803d;
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #dff5e5;
+      color: #16733a;
       font-weight: bold;
+      font-size: 12px;
     }
 
     .fail {
-      color: #dc2626;
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #fde2e2;
+      color: #a32626;
       font-weight: bold;
+      font-size: 12px;
     }
 
-    .empty-state {
+    .empty-message {
+      text-align: center;
+      padding: 40px;
+      color: #7a8795;
+    }
+
+    .loading {
       text-align: center;
       padding: 30px;
-      color: #64748b;
+      color: #687586;
     }
 
-    @media (max-width: 700px) {
+    /* =========================
+       RESPONSIVE
+    ========================= */
 
-      .header {
-        padding: 18px;
-        flex-direction: column;
-        align-items: flex-start;
+    @media (max-width: 900px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
       }
 
       .container {
-        padding: 0 10px;
+        padding: 20px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        padding: 16px;
       }
 
-      .card {
-        padding: 18px;
+      .topbar h1 {
+        font-size: 18px;
       }
 
       .stats {
         grid-template-columns: 1fr;
       }
 
-      .toolbar {
-        align-items: stretch;
-        flex-direction: column;
+      .container {
+        padding: 15px;
       }
 
-      .toolbar input {
-        min-width: 100%;
+      .login-box {
+        padding: 28px;
       }
 
-      .toolbar button {
+      #searchInput {
         width: 100%;
+      }
+
+      .controls {
+        width: 100%;
+      }
+
+      #statusFilter,
+      #refreshBtn {
+        flex: 1;
       }
     }
   </style>
@@ -262,138 +353,175 @@
 
 <body>
 
-  <!-- LOGIN -->
-  <div id="loginPanel">
+<!-- =====================================================
+     LOGIN PANEL
+===================================================== -->
 
-    <div class="card login-card">
+<div id="loginPanel">
 
-      <h2>PGD Ultrasound Admin</h2>
+  <div class="login-box">
 
-      <p>
-        Sign in to view student quiz results.
-      </p>
+    <h1>PGD Ultrasound</h1>
 
-      <input
-        type="email"
-        id="adminEmail"
-        placeholder="Admin email"
-        autocomplete="email"
-      >
+    <h2>Administrator Login</h2>
 
-      <input
-        type="password"
-        id="adminPassword"
-        placeholder="Password"
-        autocomplete="current-password"
-      >
+    <label for="adminEmail">Email Address</label>
 
-      <button
-        id="loginBtn"
-        class="primary-btn login-btn"
-      >
-        Login
-      </button>
+    <input
+      type="email"
+      id="adminEmail"
+      placeholder="Enter admin email"
+    >
 
-      <p id="loginMessage" class="status"></p>
+    <label for="adminPassword">Password</label>
 
+    <input
+      type="password"
+      id="adminPassword"
+      placeholder="Enter password"
+    >
+
+    <button id="loginBtn">
+      Login to Dashboard
+    </button>
+
+    <p id="loginMessage"></p>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     ADMIN DASHBOARD
+===================================================== -->
+
+<div id="adminDashboard">
+
+  <div class="topbar">
+
+    <div>
+      <h1>PGD Ultrasound Admin Dashboard</h1>
+      <p>Mock Examination Results Management</p>
     </div>
+
+    <button id="logoutBtn">
+      Logout
+    </button>
 
   </div>
 
 
-  <!-- ADMIN DASHBOARD -->
-  <div id="adminDashboard" style="display:none;">
+  <div class="container">
 
-    <div class="header">
+    <!-- STATISTICS -->
 
-      <div>
-        <h1>PGD Ultrasound Admin Dashboard</h1>
-        <p>Student Mock Examination Results</p>
+    <div class="stats">
+
+      <div class="stat-card">
+        <h3>Total Attempts</h3>
+        <div class="number" id="totalAttempts">0</div>
       </div>
 
-      <button
-        id="logoutBtn"
-        class="danger-btn"
-      >
-        Logout
-      </button>
+      <div class="stat-card">
+        <h3>Average Score</h3>
+        <div class="number" id="averageScore">0%</div>
+      </div>
+
+      <div class="stat-card">
+        <h3>Pass Rate</h3>
+        <div class="number" id="passRate">0%</div>
+      </div>
+
+      <div class="stat-card">
+        <h3>Highest Score</h3>
+        <div class="number" id="highestScore">0%</div>
+      </div>
 
     </div>
 
 
-    <div class="container">
+    <!-- RESULTS -->
 
-      <!-- STATISTICS -->
-      <div class="stats">
+    <div class="results-card">
 
-        <div class="stat-card">
-          <small>Total Quiz Attempts</small>
-          <strong id="attemptCount">0</strong>
-        </div>
+      <div class="results-header">
 
-        <div class="stat-card">
-          <small>Students Displayed</small>
-          <strong id="studentCount">0</strong>
-        </div>
+        <h2>
+          Student Results
+          (<span id="attemptCount">0</span>)
+        </h2>
 
-        <div class="stat-card">
-          <small>Average Percentage</small>
-          <strong id="averagePercentage">0%</strong>
-        </div>
-
-      </div>
-
-
-      <!-- RESULTS -->
-      <div class="card">
-
-        <h2>Quiz Attempts</h2>
-
-        <div class="toolbar">
+        <div class="controls">
 
           <input
             type="text"
             id="searchInput"
-            placeholder="Search student, ID, or exam..."
+            placeholder="Search student, ID, exam..."
           >
 
-          <button
-            id="refreshBtn"
-            class="secondary-btn"
-          >
-            Refresh Results
+          <select id="statusFilter">
+
+            <option value="all">
+              All Results
+            </option>
+
+            <option value="pass">
+              Pass
+            </option>
+
+            <option value="fail">
+              Fail
+            </option>
+
+          </select>
+
+          <button id="refreshBtn">
+            Refresh
           </button>
 
         </div>
 
-        <p id="resultsMessage" class="status"></p>
+      </div>
 
-        <div class="table-wrapper">
 
-          <table>
+      <div class="table-wrapper">
 
-            <thead>
+        <table>
 
-              <tr>
-                <th>Student Name</th>
-                <th>Student ID</th>
-                <th>Exam Title</th>
-                <th>Score</th>
-                <th>Total Questions</th>
-                <th>Percentage</th>
-                <th>Result</th>
-                <th>Time Taken</th>
-                <th>Started At</th>
-                <th>Completed At</th>
-              </tr>
+          <thead>
 
-            </thead>
+            <tr>
 
-            <tbody id="resultsTableBody"></tbody>
+              <th>Student Name</th>
 
-          </table>
+              <th>Student ID</th>
 
-        </div>
+              <th>Exam Title</th>
+
+              <th>Score</th>
+
+              <th>Total Questions</th>
+
+              <th>Percentage</th>
+
+              <th>Status</th>
+
+              <th>Time Taken</th>
+
+              <th>Started At</th>
+
+              <th>Completed At</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="resultsTableBody">
+
+          </tbody>
+
+        </table>
 
       </div>
 
@@ -401,175 +529,744 @@
 
   </div>
 
-
-  <!-- SUPABASE -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script>
-
-    /* =========================================
-       SUPABASE CONFIGURATION
-    ========================================= */
-
-    const SUPABASE_URL =
-      "https://wyxejfjmtbcdaunipxpi.supabase.co";
-
-    const SUPABASE_PUBLISHABLE_KEY =
-      "sb_publishable_DWOMxasUNN3WJVWcIg520Q_YMrheEXy";
-
-    const ADMIN_USER_ID =
-      "446cc177-7540-4b16-9bde-4df3cdbeca7e";
+</div>
 
 
-    const supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
+<!-- =====================================================
+     SUPABASE
+===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+<script>
+
+  /* =====================================================
+     SUPABASE CONFIGURATION
+  ===================================================== */
+
+  const SUPABASE_URL =
+    "https://wyxejfjmtbcdaunipxpi.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_DWOMxasUNN3WJVWcIg520Q_YMrheEXy";
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+  /* =====================================================
+     ELEMENTS
+  ===================================================== */
+
+  const loginPanel =
+    document.getElementById("loginPanel");
+
+  const adminDashboard =
+    document.getElementById("adminDashboard");
+
+  const loginBtn =
+    document.getElementById("loginBtn");
+
+  const logoutBtn =
+    document.getElementById("logoutBtn");
+
+  const loginMessage =
+    document.getElementById("loginMessage");
+
+  const searchInput =
+    document.getElementById("searchInput");
+
+  const statusFilter =
+    document.getElementById("statusFilter");
+
+  const refreshBtn =
+    document.getElementById("refreshBtn");
+
+  const resultsTableBody =
+    document.getElementById("resultsTableBody");
+
+  const attemptCount =
+    document.getElementById("attemptCount");
+
+  const totalAttempts =
+    document.getElementById("totalAttempts");
+
+  const averageScore =
+    document.getElementById("averageScore");
+
+  const passRate =
+    document.getElementById("passRate");
+
+  const highestScore =
+    document.getElementById("highestScore");
+
+
+  /* =====================================================
+     STORE RESULTS
+  ===================================================== */
+
+  let allAttempts = [];
+
+
+  /* =====================================================
+     LOGIN
+  ===================================================== */
+
+  loginBtn.addEventListener("click", async function () {
+
+    const email =
+      document.getElementById("adminEmail").value.trim();
+
+    const password =
+      document.getElementById("adminPassword").value;
+
+    if (!email || !password) {
+
+      loginMessage.textContent =
+        "Please enter your email and password.";
+
+      return;
+    }
+
+    loginMessage.textContent =
+      "Logging in...";
+
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+
+        email: email,
+
+        password: password
+
+      });
+
+
+    if (error) {
+
+      console.error(
+        "Login failed:",
+        error
       );
 
+      loginMessage.textContent =
+        "Login failed: " + error.message;
 
-    /* =========================================
-       ELEMENTS
-    ========================================= */
-
-    const loginPanel =
-      document.getElementById("loginPanel");
-
-    const adminDashboard =
-      document.getElementById("adminDashboard");
-
-    const loginBtn =
-      document.getElementById("loginBtn");
-
-    const loginMessage =
-      document.getElementById("loginMessage");
-
-    const logoutBtn =
-      document.getElementById("logoutBtn");
-
-    const refreshBtn =
-      document.getElementById("refreshBtn");
-
-    const searchInput =
-      document.getElementById("searchInput");
-
-    const resultsTableBody =
-      document.getElementById("resultsTableBody");
-
-    const resultsMessage =
-      document.getElementById("resultsMessage");
-
-    const attemptCount =
-      document.getElementById("attemptCount");
-
-    const studentCount =
-      document.getElementById("studentCount");
-
-    const averagePercentage =
-      document.getElementById("averagePercentage");
+      return;
+    }
 
 
-    /* =========================================
-       STORE RESULTS
-    ========================================= */
+    console.log(
+      "Admin login successful:",
+      data.user
+    );
 
-    let allAttempts = [];
+
+    loginMessage.textContent =
+      "Login successful!";
 
 
-    /* =========================================
-       LOGIN
-    ========================================= */
+    loginPanel.style.display =
+      "none";
 
-    loginBtn.addEventListener("click", async function () {
+    adminDashboard.style.display =
+      "block";
 
-      const email =
-        document.getElementById("adminEmail")
-          .value
-          .trim();
 
-      const password =
-        document.getElementById("adminPassword")
-          .value;
+    loadQuizAttempts();
 
-      if (!email || !password) {
+  });
 
-        loginMessage.textContent =
-          "Please enter your email and password.";
 
-        loginMessage.className =
-          "status error";
+  /* =====================================================
+     LOAD QUIZ ATTEMPTS
+  ===================================================== */
 
-        return;
+  async function loadQuizAttempts() {
+
+    resultsTableBody.innerHTML = `
+      <tr>
+        <td colspan="10" class="loading">
+          Loading quiz results...
+        </td>
+      </tr>
+    `;
+
+
+    const { data, error } =
+      await supabaseClient
+
+        .from("quiz_attempts")
+
+        .select("*")
+
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
+
+
+    if (error) {
+
+      console.error(
+        "Failed to load quiz attempts:",
+        error
+      );
+
+      resultsTableBody.innerHTML = `
+        <tr>
+          <td colspan="10" class="empty-message">
+            Failed to load results.
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+
+    console.log(
+      "Quiz attempts loaded:",
+      data
+    );
+
+
+    allAttempts = data || [];
+
+
+    updateStatistics(
+      allAttempts
+    );
+
+
+    displayResults(
+      allAttempts
+    );
+
+  }
+
+
+  /* =====================================================
+     STATISTICS
+  ===================================================== */
+
+  function updateStatistics(attempts) {
+
+    const total =
+      attempts.length;
+
+
+    totalAttempts.textContent =
+      total;
+
+
+    attemptCount.textContent =
+      total;
+
+
+    if (total === 0) {
+
+      averageScore.textContent =
+        "0%";
+
+      passRate.textContent =
+        "0%";
+
+      highestScore.textContent =
+        "0%";
+
+      return;
+    }
+
+
+    let totalPercentage = 0;
+
+    let passCount = 0;
+
+    let highest = 0;
+
+
+    attempts.forEach(function(attempt) {
+
+      const percentage =
+        Number(attempt.percentage) || 0;
+
+
+      totalPercentage +=
+        percentage;
+
+
+      if (percentage >= 50) {
+
+        passCount++;
+
       }
 
 
-      loginMessage.textContent =
-        "Logging in...";
+      if (percentage > highest) {
 
-      loginMessage.className =
-        "status loading";
+        highest =
+          percentage;
+
+      }
+
+    });
 
 
-      const { data, error } =
-        await supabaseClient.auth.signInWithPassword({
+    const average =
+      totalPercentage / total;
 
-          email: email,
 
-          password: password
+    const passPercentage =
+      (passCount / total) * 100;
 
-        });
+
+    averageScore.textContent =
+      average.toFixed(1) + "%";
+
+
+    passRate.textContent =
+      passPercentage.toFixed(1) + "%";
+
+
+    highestScore.textContent =
+      highest.toFixed(1) + "%";
+
+  }
+
+
+  /* =====================================================
+     DISPLAY RESULTS
+  ===================================================== */
+
+  function displayResults(results) {
+
+    resultsTableBody.innerHTML = "";
+
+
+    attemptCount.textContent =
+      results.length;
+
+
+    if (results.length === 0) {
+
+      resultsTableBody.innerHTML = `
+        <tr>
+          <td colspan="10" class="empty-message">
+            No quiz results found.
+          </td>
+        </tr>
+      `;
+
+      return;
+    }
+
+
+    results.forEach(function(attempt) {
+
+      const row =
+        document.createElement("tr");
+
+
+      const percentage =
+        Number(attempt.percentage) || 0;
+
+
+      const isPassed =
+        percentage >= 50;
+
+
+      const statusHTML =
+        isPassed
+
+          ? `<span class="pass">PASS</span>`
+
+          : `<span class="fail">FAIL</span>`;
+
+
+      const timeTaken =
+        formatTime(
+          attempt.time_taken_seconds
+        );
+
+
+      const startedAt =
+        formatDate(
+          attempt.started_at
+        );
+
+
+      const completedAt =
+        formatDate(
+          attempt.completed_at
+        );
+
+
+      row.innerHTML = `
+
+        <td>
+          ${escapeHTML(
+            attempt.student_name || ""
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            attempt.student_id || ""
+          )}
+        </td>
+
+        <td>
+          ${escapeHTML(
+            attempt.exam_title || ""
+          )}
+        </td>
+
+        <td>
+          ${attempt.score ?? ""}
+        </td>
+
+        <td>
+          ${attempt.total_questions ?? ""}
+        </td>
+
+        <td>
+          ${percentage.toFixed(1)}%
+        </td>
+
+        <td>
+          ${statusHTML}
+        </td>
+
+        <td>
+          ${timeTaken}
+        </td>
+
+        <td>
+          ${startedAt}
+        </td>
+
+        <td>
+          ${completedAt}
+        </td>
+
+      `;
+
+
+      resultsTableBody.appendChild(
+        row
+      );
+
+    });
+
+  }
+
+
+  /* =====================================================
+     SEARCH + FILTER
+  ===================================================== */
+
+  function filterResults() {
+
+    const searchTerm =
+      searchInput.value
+        .trim()
+        .toLowerCase();
+
+
+    const status =
+      statusFilter.value;
+
+
+    const filtered =
+      allAttempts.filter(
+        function(attempt) {
+
+          const studentName =
+            (
+              attempt.student_name || ""
+            ).toLowerCase();
+
+
+          const studentID =
+            (
+              attempt.student_id || ""
+            ).toLowerCase();
+
+
+          const examTitle =
+            (
+              attempt.exam_title || ""
+            ).toLowerCase();
+
+
+          const matchesSearch =
+            studentName.includes(searchTerm) ||
+            studentID.includes(searchTerm) ||
+            examTitle.includes(searchTerm);
+
+
+          const percentage =
+            Number(
+              attempt.percentage
+            ) || 0;
+
+
+          const matchesStatus =
+
+            status === "all"
+
+            ||
+
+            (
+              status === "pass" &&
+              percentage >= 50
+            )
+
+            ||
+
+            (
+              status === "fail" &&
+              percentage < 50
+            );
+
+
+          return (
+            matchesSearch &&
+            matchesStatus
+          );
+
+        }
+      );
+
+
+    displayResults(
+      filtered
+    );
+
+  }
+
+
+  searchInput.addEventListener(
+    "input",
+    filterResults
+  );
+
+
+  statusFilter.addEventListener(
+    "change",
+    filterResults
+  );
+
+
+  /* =====================================================
+     REFRESH
+  ===================================================== */
+
+  refreshBtn.addEventListener(
+    "click",
+    function() {
+
+      loadQuizAttempts();
+
+    }
+  );
+
+
+  /* =====================================================
+     LOGOUT
+  ===================================================== */
+
+  logoutBtn.addEventListener(
+    "click",
+    async function() {
+
+      const { error } =
+        await supabaseClient.auth.signOut();
 
 
       if (error) {
 
         console.error(
-          "Login failed:",
+          "Logout failed:",
           error
         );
 
-        loginMessage.textContent =
-          "Login failed: " + error.message;
-
-        loginMessage.className =
-          "status error";
-
         return;
       }
 
 
-      console.log(
-        "Admin login successful:",
-        data.user
+      adminDashboard.style.display =
+        "none";
+
+
+      loginPanel.style.display =
+        "flex";
+
+
+      document.getElementById(
+        "adminEmail"
+      ).value = "";
+
+
+      document.getElementById(
+        "adminPassword"
+      ).value = "";
+
+
+      loginMessage.textContent = "";
+
+    }
+  );
+
+
+  /* =====================================================
+     FORMAT TIME
+  ===================================================== */
+
+  function formatTime(seconds) {
+
+    if (
+      seconds === null ||
+      seconds === undefined ||
+      seconds === ""
+    ) {
+
+      return "—";
+
+    }
+
+
+    const totalSeconds =
+      Number(seconds);
+
+
+    if (
+      isNaN(totalSeconds)
+    ) {
+
+      return "—";
+
+    }
+
+
+    const minutes =
+      Math.floor(
+        totalSeconds / 60
       );
 
 
-      /* =========================================
-         ADMIN CHECK
-      ========================================= */
-
-      if (data.user.id !== ADMIN_USER_ID) {
-
-        await supabaseClient.auth.signOut();
-
-        loginMessage.textContent =
-          "Access denied. This account is not an administrator.";
-
-        loginMessage.className =
-          "status error";
-
-        return;
-      }
+    const remainingSeconds =
+      totalSeconds % 60;
 
 
-      loginMessage.textContent =
-        "Login successful!";
+    return (
+      minutes +
+      " min " +
+      remainingSeconds +
+      " sec"
+    );
 
-      loginMessage.className =
-        "status success";
+  }
+
+
+  /* =====================================================
+     FORMAT DATE
+  ===================================================== */
+
+  function formatDate(dateValue) {
+
+    if (!dateValue) {
+
+      return "—";
+
+    }
+
+
+    const date =
+      new Date(dateValue);
+
+
+    if (
+      isNaN(date.getTime())
+    ) {
+
+      return dateValue;
+
+    }
+
+
+    return date.toLocaleString();
+
+  }
+
+
+  /* =====================================================
+     HTML SAFETY
+  ===================================================== */
+
+  function escapeHTML(value) {
+
+    return String(value)
+
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+
+      .replace(
+        /</g,
+        "&lt;"
+      )
+
+      .replace(
+        />/g,
+        "&gt;"
+      )
+
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+
+      .replace(
+        /'/g,
+        "&#039;"
+      );
+
+  }
+
+
+  /* =====================================================
+     CHECK EXISTING SESSION
+  ===================================================== */
+
+  async function checkExistingSession() {
+
+    const {
+      data
+    } =
+      await supabaseClient.auth.getSession();
+
+
+    if (
+      data &&
+      data.session
+    ) {
+
+      console.log(
+        "Existing admin session found."
+      );
 
 
       loginPanel.style.display =
         "none";
+
 
       adminDashboard.style.display =
         "block";
@@ -577,500 +1274,14 @@
 
       loadQuizAttempts();
 
-    });
-
-
-    /* =========================================
-       LOAD QUIZ ATTEMPTS
-    ========================================= */
-
-    async function loadQuizAttempts() {
-
-      resultsMessage.textContent =
-        "Loading quiz attempts...";
-
-      resultsMessage.className =
-        "status loading";
-
-
-      const { data, error } =
-        await supabaseClient
-
-          .from("quiz_attempts")
-
-          .select("*")
-
-          .order(
-            "created_at",
-            {
-              ascending: false
-            }
-          );
-
-
-      if (error) {
-
-        console.error(
-          "Failed to load quiz attempts:",
-          error
-        );
-
-        resultsMessage.textContent =
-          "Failed to load results: " +
-          error.message;
-
-        resultsMessage.className =
-          "status error";
-
-        return;
-      }
-
-
-      console.log(
-        "Quiz attempts loaded:",
-        data
-      );
-
-
-      allAttempts =
-        data || [];
-
-
-      updateStatistics(
-        allAttempts
-      );
-
-
-      displayResults(
-        allAttempts
-      );
-
-
-      resultsMessage.textContent =
-        "Results loaded successfully.";
-
-      resultsMessage.className =
-        "status success";
-
     }
 
+  }
 
-    /* =========================================
-       DISPLAY RESULTS
-    ========================================= */
 
-    function displayResults(results) {
+  checkExistingSession();
 
-      resultsTableBody.innerHTML =
-        "";
-
-
-      if (!results.length) {
-
-        resultsTableBody.innerHTML = `
-          <tr>
-            <td
-              colspan="10"
-              class="empty-state"
-            >
-              No quiz attempts found.
-            </td>
-          </tr>
-        `;
-
-        return;
-      }
-
-
-      results.forEach(function (attempt) {
-
-        const row =
-          document.createElement("tr");
-
-
-        /* SCORE */
-
-        const score =
-          attempt.score ?? "";
-
-
-        /* TOTAL QUESTIONS */
-
-        const totalQuestions =
-          attempt.total_questions ?? "";
-
-
-        /* PERCENTAGE */
-
-        const percentage =
-          Number(attempt.percentage || 0);
-
-
-        /* PASS / FAIL */
-
-        const resultText =
-          percentage >= 50
-            ? "PASS"
-            : "FAIL";
-
-
-        const resultClass =
-          percentage >= 50
-            ? "pass"
-            : "fail";
-
-
-        /* TIME */
-
-        let timeTaken = "";
-
-
-        if (
-          attempt.time_taken_seconds !== null &&
-          attempt.time_taken_seconds !== undefined
-        ) {
-
-          const seconds =
-            Number(
-              attempt.time_taken_seconds
-            );
-
-          const minutes =
-            Math.floor(seconds / 60);
-
-          const remainingSeconds =
-            seconds % 60;
-
-
-          timeTaken =
-            minutes +
-            " min " +
-            remainingSeconds +
-            " sec";
-        }
-
-
-        /* DATES */
-
-        const startedAt =
-          formatDate(
-            attempt.started_at
-          );
-
-        const completedAt =
-          formatDate(
-            attempt.completed_at
-          );
-
-
-        row.innerHTML = `
-
-          <td>
-            ${escapeHtml(
-              attempt.student_name || ""
-            )}
-          </td>
-
-          <td>
-            ${escapeHtml(
-              attempt.student_id || ""
-            )}
-          </td>
-
-          <td>
-            ${escapeHtml(
-              attempt.exam_title || ""
-            )}
-          </td>
-
-          <td>
-            ${score}
-          </td>
-
-          <td>
-            ${totalQuestions}
-          </td>
-
-          <td>
-            ${percentage}%
-          </td>
-
-          <td class="${resultClass}">
-            ${resultText}
-          </td>
-
-          <td>
-            ${timeTaken}
-          </td>
-
-          <td>
-            ${startedAt}
-          </td>
-
-          <td>
-            ${completedAt}
-          </td>
-
-        `;
-
-
-        resultsTableBody.appendChild(
-          row
-        );
-
-      });
-
-    }
-
-
-    /* =========================================
-       SEARCH
-    ========================================= */
-
-    searchInput.addEventListener(
-      "input",
-      function () {
-
-        const searchTerm =
-          searchInput.value
-            .trim()
-            .toLowerCase();
-
-
-        if (!searchTerm) {
-
-          displayResults(
-            allAttempts
-          );
-
-          return;
-        }
-
-
-        const filteredResults =
-          allAttempts.filter(
-            function (attempt) {
-
-              const studentName =
-                (
-                  attempt.student_name || ""
-                ).toLowerCase();
-
-
-              const studentId =
-                (
-                  attempt.student_id || ""
-                ).toLowerCase();
-
-
-              const examTitle =
-                (
-                  attempt.exam_title || ""
-                ).toLowerCase();
-
-
-              return (
-
-                studentName.includes(
-                  searchTerm
-                )
-
-                ||
-
-                studentId.includes(
-                  searchTerm
-                )
-
-                ||
-
-                examTitle.includes(
-                  searchTerm
-                )
-
-              );
-
-            }
-          );
-
-
-        displayResults(
-          filteredResults
-        );
-
-      }
-    );
-
-
-    /* =========================================
-       REFRESH
-    ========================================= */
-
-    refreshBtn.addEventListener(
-      "click",
-      function () {
-
-        loadQuizAttempts();
-
-      }
-    );
-
-
-    /* =========================================
-       LOGOUT
-    ========================================= */
-
-    logoutBtn.addEventListener(
-      "click",
-      async function () {
-
-        await supabaseClient.auth.signOut();
-
-        allAttempts = [];
-
-        resultsTableBody.innerHTML = "";
-
-        adminDashboard.style.display =
-          "none";
-
-        loginPanel.style.display =
-          "block";
-
-        loginMessage.textContent =
-          "You have been logged out.";
-
-        loginMessage.className =
-          "status success";
-
-      }
-    );
-
-
-    /* =========================================
-       STATISTICS
-    ========================================= */
-
-    function updateStatistics(attempts) {
-
-      attemptCount.textContent =
-        attempts.length;
-
-
-      const uniqueStudents =
-        new Set(
-
-          attempts
-            .map(function (attempt) {
-
-              return attempt.student_id ||
-                     attempt.student_name ||
-                     "";
-
-            })
-
-            .filter(Boolean)
-
-        );
-
-
-      studentCount.textContent =
-        uniqueStudents.size;
-
-
-      if (!attempts.length) {
-
-        averagePercentage.textContent =
-          "0%";
-
-        return;
-      }
-
-
-      const totalPercentage =
-        attempts.reduce(
-          function (sum, attempt) {
-
-            return sum +
-              Number(
-                attempt.percentage || 0
-              );
-
-          },
-          0
-        );
-
-
-      const average =
-        totalPercentage /
-        attempts.length;
-
-
-      averagePercentage.textContent =
-        average.toFixed(1) + "%";
-
-    }
-
-
-    /* =========================================
-       DATE FORMATTER
-    ========================================= */
-
-    function formatDate(dateValue) {
-
-      if (!dateValue) {
-        return "";
-      }
-
-
-      const date =
-        new Date(dateValue);
-
-
-      if (isNaN(date.getTime())) {
-        return dateValue;
-      }
-
-
-      return date.toLocaleString();
-
-    }
-
-
-    /* =========================================
-       HTML SAFETY
-    ========================================= */
-
-    function escapeHtml(value) {
-
-      return String(value)
-
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-
-        .replace(
-          /</g,
-          "&lt;"
-        )
-
-        .replace(
-          />/g,
-          "&gt;"
-        )
-
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-
-        .replace(
-          /'/g,
-          "&#039;"
-        );
-
-    }
-
-  </script>
+</script>
 
 </body>
 </html>
