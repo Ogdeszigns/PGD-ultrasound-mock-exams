@@ -502,40 +502,6 @@
     }
   });
 })();
-  
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-    const SUPABASE_URL =
-        "https://wyxejfjmtbcdaunipxpi.supabase.co";
-
-    const SUPABASE_PUBLISHABLE_KEY =
-        "sb_publishable_DWOMxasUNN3WJVWcIg520Q_YMrheEXy";
-
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_PUBLISHABLE_KEY
-        );
-  supabaseClient
-    .from("quiz_attempts")
-    .select("id")
-    .limit(1)
-    .then(({ data, error }) => {
-
-        if (error) {
-            console.error(
-                "Supabase connection test failed:",
-                error
-            );
-        } else {
-            console.log(
-                "Supabase connection successful."
-            );
-        }
-
-    });
-</script>
 </script>
 </body>
 </html>
