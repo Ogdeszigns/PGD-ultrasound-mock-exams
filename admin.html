@@ -142,7 +142,7 @@ data.forEach(function(attempt) {
     <td>${attempt.score || ""}</td>
     <td>${attempt.total_questions || ""}</td>
     <td>${attempt.percentage || ""}%</td>
-    <td>${attempt.time_taken_seconds || ""} sec</td>
+    <td>${attempt.time_taken_seconds ? Math.floor(attempt.time_taken_seconds / 60) + " min " + (attempt.time_taken_seconds % 60) + " sec" : ""}</td>
     <td>${attempt.started_at || ""}</td>
     <td>${attempt.completed_at || ""}</td>
   `;
