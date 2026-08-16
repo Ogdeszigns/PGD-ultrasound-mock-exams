@@ -151,6 +151,9 @@ data.forEach(function(attempt) {
 });
 }
     loadQuizAttempts();
+    document.getElementById("refreshBtn").addEventListener("click", function() {
+  loadQuizAttempts();
+});
 document.getElementById("loginPanel").style.display = "none";
 document.getElementById("adminDashboard").style.display = "block";
   });
