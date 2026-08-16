@@ -11,7 +11,29 @@
 
   <h1>PGD Ultrasound Admin Dashboard</h1>
 
-  <p>Admin dashboard is loading...</p>
+  <div id="loginPanel">
+
+  <h2>Admin Login</h2>
+
+  <input
+    type="email"
+    id="adminEmail"
+    placeholder="Admin email"
+  >
+
+  <input
+    type="password"
+    id="adminPassword"
+    placeholder="Password"
+  >
+
+  <button id="loginBtn">
+    Login
+  </button>
+
+  <p id="loginMessage"></p>
+
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
