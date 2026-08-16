@@ -503,5 +503,19 @@
   });
 })();
 </script>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = "https://wyxejfjmtbcdaunipxpi.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY = "Ysb_publishable_DWOMxasUNN3WJVWcIg520Q_YMrheEXy";
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+</script>
+
 </body>
 </html>
