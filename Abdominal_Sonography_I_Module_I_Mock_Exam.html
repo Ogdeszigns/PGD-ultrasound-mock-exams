@@ -470,10 +470,13 @@
         if(!ok){ return; }
       }
     }
-    state.finished = true;
+   state.finished = true;
 state.completedAt = new Date();
 
 clearInterval(state.timerHandle);
+
+saveAttemptToSupabase(auto);
+
 quizScreen.style.display = 'none';
 showResults(auto);
   }
