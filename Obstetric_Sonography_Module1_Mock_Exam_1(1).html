@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obstetric Sonography — Module 1 Mock Exam</title>
+<style>
+  :root{
+    --ink:#0F2438;
+    --ink-soft:#3C5065;
+    --paper:#EEF2F1;
+    --panel:#FFFFFF;
+    --line:#CBD6D6;
+    --accent:#B4392F;      /* report-stamp red */
+    --accent-soft:#F1DAD7;
+    --signal:#1E7D6B;      /* echo-signal teal */
+    --signal-soft:#DCEFEA;
+    --amber:#B8862B;
+    --amber-soft:#F5E9D2;
+    --mono: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--sans);}
+  body{min-height:100vh;}
+  .wrap{max-width:880px;margin:0 auto;padding:24px 18px 80px;}
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    background:var(--ink);
+    color:#EAF0EF;
+    border-radius:10px;
+    padding:22px 24px;
+    position:relative;
+    overflow:hidden;
+    margin-bottom:18px;
+  }
+  .masthead .sweep{
+    position:absolute; top:0; left:-30%; width:60%; height:100%;
+    background:linear-gradient(100deg, transparent, rgba(30,125,107,0.28), transparent);
+    animation:sweep 5.5s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes sweep{
+    0%{ left:-40%; }
+    50%{ left:110%; }
+    100%{ left:110%; }
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:#9FC7BE; margin:0 0 6px;
+  }
+  .masthead h1{
+    font-family:var(--serif); font-weight:700; font-size:26px; margin:0 0 4px; line-height:1.2;
+  }
+  .masthead p.sub{ margin:0; color:#B9C6D0; font-size:13.5px;}
+  .hr-thread{ height:1px; background:linear-gradient(90deg, #2B4356, transparent); margin:16px 0 0;}
+
+  /* ---------- cards ---------- */
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px 22px;
+  }
+  .field-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px 22px; margin:18px 0 22px;
+  }
+  .field-grid .field{border-bottom:1px dashed var(--line); padding-bottom:8px;}
+  .field label{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:4px;}
+  .field .val{font-size:14.5px; font-weight:600;}
+  input[type=text]{
+    width:100%; border:none; border-bottom:1px solid var(--line); background:transparent;
+    font-size:14.5px; font-weight:600; font-family:var(--sans); color:var(--ink); padding:2px 0 6px;
+  }
+  input[type=text]:focus{outline:none; border-bottom-color:var(--signal);}
+
+  button{
+    font-family:var(--sans); font-weight:700; font-size:14.5px; letter-spacing:.01em;
+    border:none; border-radius:7px; padding:12px 20px; cursor:pointer;
+  }
+  .btn-primary{ background:var(--signal); color:#fff; }
+  .btn-primary:hover{ background:#166457; }
+  .btn-primary:disabled{ background:#9CB8B2; cursor:not-allowed; }
+  .btn-ghost{ background:transparent; color:var(--ink-soft); border:1px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--ink-soft); color:var(--ink);}
+  .btn-danger{ background:var(--accent); color:#fff; }
+  .btn-danger:hover{ background:#912a22; }
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .row.between{justify-content:space-between;}
+
+  .note{font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
+  .note.warn{ background:var(--amber-soft); border:1px solid #E4CE9E; color:#6B4E12; padding:10px 12px; border-radius:7px;}
+
+  /* ---------- exam bar (sticky during quiz) ---------- */
+  #examBar{
+    position:sticky; top:0; z-index:5;
+    background:var(--ink); color:#EAF0EF;
+    border-radius:10px; padding:12px 16px; margin-bottom:16px;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    box-shadow:0 6px 18px rgba(15,36,56,0.18);
+  }
+  #timer{
+    font-family:var(--mono); font-size:20px; letter-spacing:.03em; font-weight:600;
+    padding:4px 10px; border-radius:6px; background:rgba(255,255,255,0.08);
+  }
+  #timer.low{ background:rgba(180,57,47,0.35); color:#FFD9D5; }
+  #progressText{font-family:var(--mono); font-size:12px; color:#B9C6D0;}
+  .barTrack{ height:5px; border-radius:3px; background:rgba(255,255,255,0.12); overflow:hidden; margin-top:8px;}
+  .barFill{ height:100%; background:var(--signal); width:0%; transition:width .25s;}
+
+  /* ---------- question palette ---------- */
+  #palette{
+    display:grid; grid-template-columns:repeat(10, 1fr); gap:6px; margin:14px 0 18px;
+  }
+  .pcell{
+    font-family:var(--mono); font-size:11px; text-align:center; padding:6px 0;
+    border-radius:5px; border:1px solid var(--line); background:var(--panel); cursor:pointer; color:var(--ink-soft);
+  }
+  .pcell.answered{ background:var(--signal-soft); border-color:var(--signal); color:var(--signal);}
+  .pcell.current{ outline:2px solid var(--ink); outline-offset:1px;}
+
+  /* ---------- question list ---------- */
+  #qlist{ display:flex; flex-direction:column; gap:14px; margin-bottom:16px; }
+  .qblock{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:18px 20px; scroll-margin-top:96px;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .qblock.answered{ border-color:var(--signal); }
+  .qblock.focused{ box-shadow:0 0 0 3px var(--signal-soft); }
+  .qblock .qnum{font-family:var(--mono); font-size:11px; color:var(--signal); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px;}
+  .qblock .qtext{font-family:var(--serif); font-size:17.5px; line-height:1.4; margin:0 0 14px;}
+  #submitPanel{ padding:24px 22px; }
+
+  .opt{
+    display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border:1px solid var(--line);
+    border-radius:8px; margin-bottom:9px; cursor:pointer; transition:border-color .15s, background .15s;
+  }
+  .opt:hover{ border-color:var(--signal); }
+  .opt input{ margin-top:3px; accent-color:var(--signal); }
+  .opt .letter{font-family:var(--mono); font-weight:700; color:var(--ink-soft); width:16px;}
+  .opt.selected{ border-color:var(--signal); background:var(--signal-soft); }
+  .opt.selected .letter{ color:var(--signal); }
+
+  /* ---------- results ---------- */
+  .scoreCard{ display:flex; align-items:center; gap:22px; margin-bottom:8px;}
+  .scoreCircle{
+    width:88px; height:88px; border-radius:50%; border:6px solid var(--signal);
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono);
+    font-size:20px; font-weight:700; flex:none;
+  }
+  .reviewItem{ border:1px solid var(--line); border-radius:9px; padding:14px 16px; margin-bottom:10px;}
+  .reviewItem.correct{ border-left:5px solid var(--signal);}
+  .reviewItem.incorrect{ border-left:5px solid var(--accent);}
+  .reviewItem.skipped{ border-left:5px solid var(--amber);}
+  .rq{ font-family:var(--serif); font-size:15.5px; margin:0 0 8px; }
+  .rline{ font-size:13.5px; margin:3px 0; }
+  .rline.your{ color:var(--accent); }
+  .rline.correctline{ color:var(--signal); }
+  .rexpl{ font-size:13px; color:var(--ink-soft); margin-top:6px; line-height:1.5; border-top:1px dashed var(--line); padding-top:6px;}
+  .tag{font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.06em; padding:2px 7px; border-radius:4px; margin-right:6px;}
+  .tag.correct{background:var(--signal-soft); color:var(--signal);}
+  .tag.incorrect{background:var(--accent-soft); color:var(--accent);}
+  .tag.skipped{background:var(--amber-soft); color:var(--amber);}
+
+  .filterRow{display:flex; gap:8px; margin:14px 0; flex-wrap:wrap;}
+  .filterBtn{font-family:var(--mono); font-size:11.5px; padding:7px 12px; border-radius:6px; border:1px solid var(--line); background:var(--panel); color:var(--ink-soft); cursor:pointer;}
+  .filterBtn.active{ background:var(--ink); color:#fff; border-color:var(--ink);}
+
+  footer{ text-align:center; color:var(--ink-soft); font-size:11.5px; margin-top:30px; }
+
+  @media (max-width:560px){
+    .field-grid{grid-template-columns:1fr;}
+    #palette{grid-template-columns:repeat(6,1fr);}
+    .masthead h1{font-size:21px;}
+    #qtext{font-size:17px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="sweep"></div>
+    <p class="eyebrow">Nigerian Institute of Radiographers &middot; PGD Medical Ultrasound</p>
+    <h1>Obstetric Sonography — Module&nbsp;1 Mock Examination</h1>
+    <p class="sub">100 objective questions &middot; single best answer &middot; self-marking, offline-capable exam simulator</p>
+    <div class="hr-thread"></div>
+  </div>
+
+  <!-- ===================== START SCREEN ===================== -->
+  <div id="startScreen" class="panel">
+    <div class="field-grid">
+      <div class="field">
+        <label>Student name</label>
+        <input type="text" id="candidateName" placeholder="Enter your name">
+      </div>
+      <div class="field">
+        <label>Student ID</label>
+        <input type="text" id="studentId" placeholder="Enter your student ID">
+      </div>
+      <div class="field">
+        <label>Duration</label>
+        <div class="val">1 hr 30 min (90:00)</div>
+      </div>
+      <div class="field">
+        <label>Questions</label>
+        <div class="val">100, single best answer</div>
+      </div>
+      <div class="field">
+        <label>Marking</label>
+        <div class="val">Auto-scored with explanations at the end</div>
+      </div>
+    </div>
+    <p class="note">Once you start, the clock runs continuously for 90 minutes. You can move freely between questions using the palette grid, and the quiz auto-submits when time runs out. Your answers, score and explanations only appear after you submit or time expires — there's no going back to change an answer after that point.</p>
+    <p class="note warn">Answer key note: this exam has no publisher-supplied answer key. Correct answers and explanations were derived from standard obstetric-ultrasound references by the assistant that built this quiz — a few borderline items (worded ambiguously in the source paper) are marked with a best-judgement call, so please cross-check anything you're unsure of against your course material.</p>
+    <div class="row" style="margin-top:16px;">
+      <button class="btn-primary" id="startBtn">Start exam — begin 90:00 clock</button>
+    </div>
+  </div>
+
+  <!-- ===================== QUIZ SCREEN ===================== -->
+  <div id="quizScreen" style="display:none;">
+    <div id="examBar">
+      <div>
+        <div id="progressText">Question 1 of 100</div>
+        <div class="barTrack"><div class="barFill" id="barFill"></div></div>
+      </div>
+      <div id="timer">90:00</div>
+    </div>
+
+    <div class="panel" style="padding:20px 22px 8px;">
+      <div id="palette"></div>
+      <p class="note" style="margin:2px 0 16px;">Answer each question and the list scrolls to the next one for you. You can also scroll or tap a number above to jump anywhere — nothing is locked once answered.</p>
+    </div>
+
+    <div id="qlist"></div>
+
+    <div class="panel" id="submitPanel" style="text-align:center;">
+      <p class="note" id="finalCount" style="margin-bottom:12px;"></p>
+      <button class="btn-danger" id="submitBtn">Submit exam</button>
+    </div>
+  </div>
+
+  <!-- ===================== RESULTS SCREEN ===================== -->
+  <div id="resultsScreen" style="display:none;">
+    <div class="panel">
+      <p class="eyebrow" style="color:var(--signal);">Result</p>
+      <div class="scoreCard">
+        <div class="scoreCircle" id="scoreCircle">--%</div>
+        <div>
+          <div style="font-family:var(--serif); font-size:20px; font-weight:700;" id="scoreHeadline">Score</div>
+          <div class="note" id="scoreSub"></div>
+        </div>
+      </div>
+      <div class="filterRow">
+        <button class="filterBtn active" data-filter="all">All (100)</button>
+        <button class="filterBtn" data-filter="incorrect">Incorrect</button>
+        <button class="filterBtn" data-filter="skipped">Unanswered</button>
+        <button class="filterBtn" data-filter="correct">Correct</button>
+      </div>
+    </div>
+    <div id="reviewList" style="margin-top:14px;"></div>
+  </div>
+
+  <footer>Generated exam simulator &middot; runs entirely in your browser, no server or internet connection required once this page is loaded.</footer>
+</div>
+
+<script id="quiz-data" type="application/json">[{"n": 1, "q": "The three (3) fetal shunts are:", "opts": ["Ductus arteriosus, ductus venosus, foramen ovale", "Ductus venosus, foramen ovale, ventricular septal defect", "Ductus arteriosus, ductus venosus, foramen ovale (same as A)", "Ductus arteriosus, foramen ovale, ventricular septal defect"], "correct": 0, "expl": "The three fetal shunts that bypass the non-functioning fetal lungs and liver are the ductus venosus, foramen ovale, and ductus arteriosus. A VSD is a defect, not a normal shunt."}, {"n": 2, "q": "Irregular heart beat is known as", "opts": ["Dysrhythmia", "Arrhythmia", "Tachycardia", "Bradycardia"], "correct": 1, "expl": "Arrhythmia is the general term for an irregular heartbeat. Tachycardia and bradycardia describe rate, not regularity."}, {"n": 3, "q": "Heart rate is determined by the contraction of the", "opts": ["LV", "RA", "LA", "RV"], "correct": 1, "expl": "The sinoatrial (SA) node, the heart's natural pacemaker, lies in the right atrium (RA)."}, {"n": 4, "q": "In fetal heart, which of the following are equal in sizes: 1. RV and LV 2. RA and LV 3. RV and LA 4. RA and LA", "opts": ["1 and 3", "2 and 4", "1 and 4", "2 and 3"], "correct": 2, "expl": "Normally the two ventricles (RV & LV) are roughly equal, and the two atria (RA & LA) are roughly equal in size."}, {"n": 5, "q": "Which of the following has thicker and smoother wall", "opts": ["RA", "RV", "LA", "LV"], "correct": 3, "expl": "The left ventricle has thicker, smoother myocardium than the trabeculated right ventricle, reflecting its higher systemic pressure workload."}, {"n": 6, "q": "Fetal cardiac axis makes", "opts": ["40 degrees from the anterior", "40 degrees from the posterior", "40 degrees from the lateral", "0 degrees from the midline"], "correct": 0, "expl": "The normal fetal cardiac axis is roughly 45 (\u00b120) degrees to the left, measured from the anteroposterior (sternum-to-spine) axis of the thorax."}, {"n": 7, "q": "Cardiac axis is such that the apex of the heart points to the-----", "opts": ["Left", "Right", "Middle", "Superiorly"], "correct": 0, "expl": "In normal fetal situs, the cardiac apex points to the left side of the chest."}, {"n": 8, "q": "Unlike the adult, the fetal heart occupies", "opts": ["50% of the thorax", "About 33% of the thorax", "1/3rd of the Abdomen", "None of the above"], "correct": 1, "expl": "The fetal heart is proportionally larger than the adult heart relative to chest size, occupying about one-third of the thoracic area."}, {"n": 9, "q": "Which organ produces amniotic fluid after 12 weeks", "opts": ["Fetal liver and the spleen", "Fetal intestines and the lungs", "Fetal intestine and the liver", "Fetal kidneys"], "correct": 3, "expl": "After the first trimester, fetal urine from the kidneys becomes the major contributor to amniotic fluid volume."}, {"n": 10, "q": "Which of the following is located on both sides of the midline", "opts": ["Interhemispheric fissures", "Third and fourth ventricles", "Lateral ventricles", "Third ventricles and cerebral aqueduct"], "correct": 2, "expl": "The lateral ventricles are paired structures, one on each side of the midline; the third/fourth ventricles and aqueduct are midline structures."}, {"n": 11, "q": "What is defined as the area located posterior to the broad ligaments and adjacent to the uterus, which contains the ovaries and fallopian tubes", "opts": ["Adnexa", "Para ovarian", "Pouch of douglas", "Space of Retzius"], "correct": 0, "expl": "The adnexa refers to the structures adjacent to the uterus - the ovaries, fallopian tubes and supporting ligaments."}, {"n": 12, "q": "The following is true about fetal circulation except", "opts": ["Oxygenated blood returns to the fetus from the placenta through a single umbilical vein", "There is no admixture of maternal and fetal blood", "Venous maternal blood enters the intervillous space", "Venous exits are scattered at random over the entire base of the placenta"], "correct": 3, "expl": "Placental exchange keeps maternal and fetal circulations separate, oxygenated blood returns via one umbilical vein, and maternal blood enters the intervillous space - but placental venous (and arterial) connections are NOT randomly scattered; they follow a more organized cotyledon pattern."}, {"n": 13, "q": "What is the stage of conceptus that implants within the decidualized endometrium.", "opts": ["Blastocyst", "Morula", "Zygote", "Ovum"], "correct": 0, "expl": "Implantation occurs at the blastocyst stage, roughly 6-7 days after fertilization."}, {"n": 14, "q": "The trophoblastic cells produce", "opts": ["Estrogen", "Progesterone", "Follicle stimulating hormone", "hCG"], "correct": 3, "expl": "Trophoblastic (syncytiotrophoblast) cells secrete human chorionic gonadotropin (hCG), which maintains the corpus luteum in early pregnancy."}, {"n": 15, "q": "Compared with a normal intra-uterine pregnancy, the ectopic pregnancy will have:", "opts": ["High hCG", "Markedly elevated hCG", "Low hCG", "High AFP"], "correct": 2, "expl": "Ectopic pregnancies typically show lower and more slowly rising hCG levels than a normally progressing intrauterine pregnancy."}, {"n": 16, "q": "In the first trimester, normal hCG levels will:", "opts": ["Double every 48 hours", "Double every 24 hours", "Triple every 24 hours", "Double every 12 hours"], "correct": 0, "expl": "In a normal early pregnancy, serum hCG approximately doubles every 48 hours (roughly 1.4-2.1 days)."}, {"n": 17, "q": "The dilation of the renal collecting system secondary to the obstruction of normal urine flow defines:", "opts": ["Nephrocalcinosis", "Renal calculi", "Hydronephrosis", "Urinary stasis"], "correct": 2, "expl": "Hydronephrosis is dilation of the renal pelvis/calyces from obstructed urine outflow."}, {"n": 18, "q": "The dilation of the renal collecting system secondary to the obstruction of normal urine flow defines: (repeat)", "opts": ["Nephrocalcinosis", "Renal calculi", "Hydronephrosis", "Urinary stasis"], "correct": 2, "expl": "Same as above - hydronephrosis."}, {"n": 19, "q": "The most accurate measurement at estimating gestational age from the below list is:", "opts": ["Bi-parietal diameter", "Trans-cerebellar measurement", "Head circumference", "Lateral ventricle"], "correct": 2, "expl": "Head circumference is less affected by head-shape variation (dolicho/brachycephaly) than BPD, making it a more reliable dating parameter in the second trimester among these choices."}, {"n": 20, "q": "What chromosomal aberration is most often associated with holoprosencephaly?", "opts": ["Anophthalmia", "Trisomy 13", "Trisomy 21", "Trisomy 18"], "correct": 1, "expl": "Holoprosencephaly, a failure of forebrain cleavage, is most strongly associated with trisomy 13 (Patau syndrome)."}, {"n": 21, "q": "The third ventricle is located:", "opts": ["Anterior to the thalamus", "Between the two lobes of the thalamus", "Anterior to the cerebellar vermis", "Superior to the corpus callosum"], "correct": 1, "expl": "The slit-like third ventricle sits in the midline between the two thalami."}, {"n": 22, "q": "All of the following are associated with ectopic pregnancy except:", "opts": ["Adnexal tenderness", "Proliferative trophoblast.", "Fluid collection in the pouch of Douglas", "Fluid in the Morrison's Pouch"], "correct": 1, "expl": "Adnexal tenderness and free fluid in the pouch of Douglas/Morison's pouch are classic ectopic findings; 'proliferative trophoblast' is a nonspecific/atypical term not characteristically used to describe ectopic pregnancy."}, {"n": 23, "q": "Components of biophysical profile include all except:", "opts": ["Fetal bone", "Fetal breathing", "Fetal body movement", "Fetal gender"], "correct": 3, "expl": "The BPP scores fetal breathing, gross body movement, tone, amniotic fluid volume, and the non-stress test. Fetal gender plays no part in the score."}, {"n": 24, "q": "An anembryonic pregnancy is also referred to as", "opts": ["Blighted ovum", "Inevitable abortion", "Closed cervix", "Hydatidiform mole"], "correct": 0, "expl": "An anembryonic pregnancy, where a gestational sac forms without an embryo, is also called a blighted ovum."}, {"n": 25, "q": "Which of the following pregnancies is NOT at risk for intrauterine growth restriction?", "opts": ["A mother who eats a steady diet of fast food", "A mother who is 15 years old", "A mother who is a 40- years-old", "A pregnancy with a two-vessel cord"], "correct": 0, "expl": "Teenage and advanced maternal age, and a single umbilical artery (two-vessel cord), are recognised IUGR risk factors. A generally poor diet alone is not a classic listed IUGR risk factor in this context (it is more linked to excess weight gain/macrosomia)."}, {"n": 26, "q": "A sonogram shows an empty uterus, but the patient has a positive pregnancy test and reports she is 5 weeks pregnant. Which diagnosis is NOT possible?", "opts": ["Ectopic pregnancy", "Complete spontaneous abortion", "Early intrauterine pregnancy", "Blighted ovum"], "correct": 3, "expl": "A blighted ovum (anembryonic pregnancy) requires visualisation of an empty gestational SAC - it cannot be diagnosed when the uterus itself is completely empty with no sac at all."}, {"n": 27, "q": "If a fetus is lying perpendicular to the maternal sagittal plane, the fetal presentation is:", "opts": ["Vertex", "Oblique", "Breech", "Transverse"], "correct": 3, "expl": "A fetal long axis perpendicular to the maternal long axis defines a transverse lie."}, {"n": 28, "q": "Oxygenated blood enters the fetus through the:", "opts": ["Placenta", "Chorionic villi", "Umbilical vein", "Umbilical arteries"], "correct": 2, "expl": "Oxygen-rich blood from the placenta travels to the fetus via the single umbilical vein."}, {"n": 29, "q": "Which of the following structures is not identified in the biparietal diameter?", "opts": ["Third ventricle", "Cavum septum pellucidi", "Fourth ventricle", "Atrium of the lateral ventricle"], "correct": 2, "expl": "The BPD/transthalamic plane shows the CSP, thalami, and lateral ventricle atria; the fourth ventricle belongs to the posterior fossa (transcerebellar) plane, not the BPD plane."}, {"n": 30, "q": "Bi-parietal diameter (BPD) is measured at the level of the:", "opts": ["Cerebrum", "Thalami", "Cerebellum", "Cisterna magna"], "correct": 1, "expl": "BPD is measured on the transthalamic plane, at the level of the thalami and cavum septum pellucidum."}, {"n": 31, "q": "What is the normal opening in the lower middle third of the atrial septum?", "opts": ["Foramen of Magendie", "Foramen ovale", "Foramen of Monro", "Ductus arteriosus"], "correct": 1, "expl": "The foramen ovale is the normal opening in the atrial septum allowing right-to-left shunting in fetal life."}, {"n": 32, "q": "What is the fetal shunt that connects the umbilical vein to the inferior vena cava (IVC)", "opts": ["Ductus venosus.", "Foramen of Monro", "Foramen of Morgagni", "Foramen ovale"], "correct": 0, "expl": "The ductus venosus channels oxygenated umbilical venous blood, largely bypassing the liver, directly into the IVC."}, {"n": 33, "q": "The nuchal fold measurement is typically obtained:", "opts": ["Before 12 weeks 6 days", "Between 18 weeks and 22 weeks", "Between 11 weeks and 13 weeks 6 days", "After 24 weeks"], "correct": 2, "expl": "Nuchal translucency/fold screening is performed in the 11 to 13 weeks 6 days window."}, {"n": 34, "q": "At what level is the nuchal fold measurement obtained?", "opts": ["Cavum septum pellucidum", "Fetal neck", "Occipital horns of the lateral ventricle", "Foramen magna"], "correct": 1, "expl": "As the name implies, the nuchal fold/translucency is measured at the back of the fetal neck."}, {"n": 35, "q": "A condition in which blood vessels are trapped between the fetus and the cervix causing haemorrhage and lack of oxygen is called:", "opts": ["Placenta previa,", "Abruptio placenta,", "Vasa previa,", "Uterine rupture."], "correct": 2, "expl": "Vasa previa is when unprotected fetal vessels cross the internal os ahead of the presenting part, at risk of rupture and fetal exsanguination during labour."}, {"n": 36, "q": "The following are abnormalities of umbilical artery Doppler except:", "opts": ["High end-diastolic flow.", "Raised resistance,", "reversed end diastolic flow", "absent end-diastolic flow."], "correct": 0, "expl": "Raised resistance with absent or reversed end-diastolic flow are abnormal (placental insufficiency) findings; high end-diastolic flow reflects low resistance and is not itself an abnormality."}, {"n": 37, "q": "The following are abnormalities of the umbilical cord except:", "opts": ["Double artery,", "Thrombosis,", "Single artery,", "Absence of coiling."], "correct": 0, "expl": "A normal cord has two arteries (and one vein) - 'double artery' describes the normal state, not an abnormality. A single umbilical artery, thrombosis, and abnormal coiling are all recognised cord abnormalities."}, {"n": 38, "q": "The ratio of the BPD to OFD is referred to as:", "opts": ["Cephalic index,", "Brachycephaly,", "Dolichocephaly,", "All of the above."], "correct": 0, "expl": "The cephalic index is the BPD-to-occipitofrontal-diameter (OFD) ratio, used to detect abnormal head shape."}, {"n": 39, "q": "In taking abdominal circumference measurement, the following planes are taking into consideration except:", "opts": ["Liver,", "Stomach,", "The left portal vein,", "The heart."], "correct": 3, "expl": "The AC plane is taken at the level of the stomach, the liver, and the junction of the umbilical/portal vein - not through the fetal heart, which is a higher thoracic structure."}, {"n": 40, "q": "Taking the transthalamic plane through the third ventricle, thalami and cavum septum pellucidum, with the calvaria being symmetrical best measures:", "opts": ["BPD,", "FL,", "Estimated fetal weight,", "HC."], "correct": 0, "expl": "This description is the standard transthalamic plane used specifically to obtain the BPD (and HC is usually taken from the same plane, but the classic teaching point for this exact plane/landmark set is BPD)."}, {"n": 41, "q": "Which of the following statements is not true of fetal situs:", "opts": ["Various severe cardiac diseases are associated with abnormal situs,", "In normal foetus, the stomach, cardiac apex and aortic arch lie on the left side of the body.", "In normal foetus, the stomach, the cardiac apex and the aortic arch lie on the right,", "Situs ambiguous refers to when some organs are correctly positioned and some wrongly positioned."], "correct": 2, "expl": "In normal (situs solitus) anatomy, the stomach, cardiac apex, and aortic arch are LEFT-sided, not right - so the statement claiming they lie on the right is false."}, {"n": 42, "q": "When there is a defect of the abdominal wall located to the right of the umbilical cord which has normal insertion with free floating herniated bowel loops is called.", "opts": ["Gastroschisis,", "Omphalocele,", "Deudonal atresia,", "Diaphragmatic hernia."], "correct": 0, "expl": "Gastroschisis is a paraumbilical (typically right-sided) full-thickness defect with a normal cord insertion and free-floating, uncovered bowel loops."}, {"n": 43, "q": "One of the following is not an indication for fetal anomaly scan:", "opts": ["Maternal diabetic meliatus", "Late 3rd trimester bleeding P.V .", "Early teratogen exposure.", "Multiple pregnancy."], "correct": 1, "expl": "Third-trimester bleeding is an obstetric emergency indication for scanning, not a classic indication for a dedicated mid-trimester fetal anomaly survey."}, {"n": 44, "q": "The most common fetal anomaly associated with facial defect and polyhydramnios, with symmetrical absence of the cranial vault and cerebral hemispheres on scan.", "opts": ["Omphalocele,", "Anencephaly,", "Hydrocephaly", "Hydranencephaly."], "correct": 1, "expl": "Anencephaly shows absence of the cranial vault/brain above the orbits ('frog-eye' sign) and is associated with facial anomalies and polyhydramnios."}, {"n": 45, "q": "Which of the following fetal anomaly is associated with trisomy 13, failure of the cleavage of the forebrain?", "opts": ["Anencephaly", "Holoprosencephaly,", "Hydranencephaly.", "Hydrocephaly."], "correct": 1, "expl": "Holoprosencephaly results from failed cleavage of the embryonic forebrain and is strongly linked to trisomy 13."}, {"n": 46, "q": "In estimating gestational age:", "opts": ["1st trimester is the worst period for GA assessment", "CRL is very accurate.", "3rd trimester is most reliable for dating.", "In transvaginal scan, full bladder is required."], "correct": 1, "expl": "First-trimester crown-rump length (CRL) is the single most accurate biometric parameter for dating a pregnancy."}, {"n": 47, "q": "Placenta previa refers to:", "opts": ["Placenta that is in front of or prior to the fetus relative to the birth canal.", "Primary cause of painless 3rd trimester bleeding pv.", "Chromosomal abnormalities can cause placenta thinning", "All of the above."], "correct": 0, "expl": "Placenta previa (placenta lying ahead of the fetus over the birth canal) is the classic cause of painless third-trimester bleeding; option A is the core definition being tested."}, {"n": 48, "q": "Polyhydramnios is frequently seen in the following fetal conditions", "opts": ["Anencephaly", "Thanatophoric dwarfism", "Duodenal atresia", "Bilateral multicystic dysplastic kidneys"], "correct": 0, "expl": "Anencephaly impairs the fetal swallowing reflex, leading to accumulation of amniotic fluid (polyhydramnios)."}, {"n": 49, "q": "The following fetal conditions are associated with oligohydramnios except", "opts": ["Infantile polycystic kidney disease", "Renal agenesis", "Chromosomal abnormalities", "Anencephaly"], "correct": 3, "expl": "Anencephaly is linked with POLYhydramnios (impaired swallowing), not oligohydramnios, unlike the renal causes listed."}, {"n": 50, "q": "Sonographic characteristics of oligohydramnios include all except", "opts": ["Fetal crowding", "Freely moving fetus", "Sonographic resolution is poor.", "Limited examination."], "correct": 1, "expl": "With reduced fluid, the fetus is crowded and restricted, not freely moving; poor acoustic windows also limit image quality and examination."}, {"n": 51, "q": "One of the following has no influence on the amniotic fluid volume", "opts": ["Fetal urination", "Swallowing", "Fetal lungs", "None of the above"], "correct": 3, "expl": "Fetal urination, swallowing, and lung fluid secretion/movement all genuinely influence amniotic fluid volume - none of the listed factors is without influence."}, {"n": 52, "q": "The hypoechoic space between placenta and myometrium is called", "opts": ["Amnion", "Retroplacental complex", "Abruptio", "Chorion"], "correct": 1, "expl": "The thin hypoechoic zone between the placenta and underlying myometrium represents the retroplacental complex (decidua, myometrium, and uterine vessels)."}, {"n": 53, "q": "Clinically large for dates pregnancy include all of the following except?", "opts": ["Multiple pregnancy,", "Hydatidiform mole,", "Fetal renal anomalies,", "Uterine mass with pregnancy."], "correct": 2, "expl": "Multiple pregnancy, molar pregnancy, and a co-existing uterine mass all enlarge the uterus; fetal renal anomalies more often cause reduced (oligohydramnios), not increased, uterine size."}, {"n": 54, "q": "In measuring amniotic fluid index all are correct except one:", "opts": ["The umbilicus is used as one reference point,", "AFI is more sensitive in predicting fetal distress,", "AFI less than 5 is oligohydramnios,", "AFI less than 25 is oligohydramnios."], "correct": 3, "expl": "Oligohydramnios is defined as an AFI below 5 cm, not below 25 cm (25 cm is closer to the polyhydramnios threshold)."}, {"n": 55, "q": "Concerning placenta previa one of the following is not correct.", "opts": ["In marginal previa, the placenta completely covers the cervix", "In the total previa the placenta completely covers the cervix", "Painless vaginal bleeding is the most common symptom of placenta previa", "Uterine anomalies is a risk factor"], "correct": 0, "expl": "In marginal previa the placenta only reaches the edge of the internal os - it does not completely cover it; complete coverage defines total previa."}, {"n": 56, "q": "The following are correct about Placenta trophotropism except?", "opts": ["Dynamic migration of the placenta at its insertion through gestation,", "Placenta grows in areas of good blood supply,", "Placenta atrophies at areas of poor blood supply and nutrition,", "Is of no significance in the development of abnormal placental shapes."], "correct": 3, "expl": "Trophotropism (differential growth toward well-vascularised endometrium and atrophy elsewhere) is in fact a key mechanism behind unusual placental shapes and apparent placental 'migration.'"}, {"n": 57, "q": "Which of the following is not true concerning the chorion and the amnion", "opts": ["The chorion is the inner membrane of the gestational sac", "Placenta develops from a portion of the chorion", "Amnion is the inner membrane surrounding the foetuses", "None of the above."], "correct": 0, "expl": "It is the amnion, not the chorion, that is the inner membrane; the chorion is the outer membrane of the gestational sac."}, {"n": 58, "q": "Concerning cephalic index one of the following is not correct:", "opts": ["Cephalic index is the ratio of BPD to OFD", "In Dolichocephaly, cephalic index is greater than 0.7", "In brachycephaly, cephalic index is greater than 0.86", "Abdominal circumference is taken at the plane of the liver, stomach and the junction where the umbilical vein meets the right portal vein."], "correct": 1, "expl": "Dolichocephaly (an elongated head shape) is characterised by a LOWER cephalic index than normal, not one greater than 0.7 - this statement reverses the relationship."}, {"n": 59, "q": "One of the following statements is not true.", "opts": ["In vasa previa, the placenta completely covers the birth canal", "In vasa previa, umbilical vessels precede the fetal presenting parts", "Vasa previa can cause hemorrhage and lack of oxygen.", "The components of retroplacental complex are: decidua, myometrium and uterine vessels."], "correct": 0, "expl": "Vasa previa refers to unprotected fetal VESSELS lying over the cervix, not the placental mass itself covering the birth canal (that would describe placenta previa instead)."}, {"n": 60, "q": "In estimating gestational age one of the following is correct.", "opts": ["First trimester is not an appropriate period for GA assessment.", "CRL is very accurate.", "After 20 weeks is not reliable for dating.", "In transvaginal scan, full bladder is very useful."], "correct": 1, "expl": "First-trimester CRL remains the gold-standard, most accurate method of dating a pregnancy."}, {"n": 61, "q": "The following fetal conditions are associated with oligohydramnios except one:", "opts": ["Fetal crowding.", "Freely moving fetus.", "Poor sonographic resolution.", "Fetal renal disease"], "correct": 1, "expl": "Oligohydramnios restricts fetal movement (crowding), rather than allowing the fetus to move freely."}, {"n": 62, "q": "Which of the following is not correct?", "opts": ["The yolk sac is connected to the mid gut by the vitelline duct", "The chorion is in between the yolk sac and the amnion.", "The yolk sac should be seen when the B-hCG is greater than 7200.", "Absence of cardiac activity at CRL less than 3mm is not a confirmation of fetal demise."], "correct": 2, "expl": "The commonly cited hCG discriminatory level relates to visualising a gestational sac (roughly 1500-2000 mIU/mL by TVS), not specifically the yolk sac at 7200 mIU/mL - this figure is not an accurate standard threshold."}, {"n": 63, "q": "Concerning twin gestation, the following are correct except?", "opts": ["Monochorionic diamniotic twin pregnancy carries a 25% risk of twin-twin transfusion syndrome.", "Monochorionic twin pregnancy carries more risk of twin-twin transfusion syndrome.", "The assessment and diagnosis of chorionicity is best done in 3rd trimester.", "The appearance of the lambda sign is diagnostic of a dichorionic diamniotic twin pregnancy."], "correct": 2, "expl": "Chorionicity is most reliably determined in the FIRST trimester (via membrane thickness/lambda or T-sign), not the third trimester when the signs become less distinct."}, {"n": 64, "q": "Which of the following is not correct?", "opts": ["Human chorionic gonadotrophin (hCG) is a placenta-specific protein that can be detected in maternal plasma and urine after ovulation.", "hCG is a hormone found in an embryo after conception", "Hydatidiform mole can be complicated by persistent trophoblastic disease.", "Trophoblastic disease is best diagnosed in the second trimester."], "correct": 3, "expl": "Molar (trophoblastic) disease is typically diagnosed in the FIRST trimester, when abnormal bleeding and a characteristic 'snowstorm' sonographic pattern usually first prompt evaluation."}, {"n": 65, "q": "Causes of placenta thinning include the following except", "opts": ["Twin pregnancy,", "Chromosomal abnormality", "Preconceptual diabetic mellitus.", "Marked polyhydramnios."], "correct": 3, "expl": "Marked polyhydramnios is not a recognised cause of a thin placenta; twin pregnancy, chromosomal abnormality, and pre-existing diabetes are more classically linked to placental thinning or abnormal placentation."}, {"n": 66, "q": "Post-partum retained placenta is prevalent in.", "opts": ["Increta", "Acreta", "Percreta", "Previa"], "correct": 1, "expl": "Placenta accreta, the most common form of the accreta spectrum, is the classic cause of a retained, adherent placenta after delivery."}, {"n": 67, "q": "The maternal endometrium response to trophoblast invasion is called", "opts": ["Decidual reaction", "Chorionic villi", "Implantation", "None of the above"], "correct": 0, "expl": "The decidual reaction describes the hormonally-driven transformation of the endometrium in response to trophoblastic invasion."}, {"n": 68, "q": "Which of the following placenta morphology is most likely to cause vasa previa", "opts": ["Velamentous insertion", "Circumvallate", "Circummarginate", "All of the above"], "correct": 0, "expl": "In velamentous cord insertion, umbilical vessels run unprotected through the membranes before reaching the placental disc, predisposing to vasa previa."}, {"n": 69, "q": "Which hormone prevents the second pregnancy during gestation?", "opts": ["FSH", "LH", "hCG", "Progesterone"], "correct": 3, "expl": "High progesterone levels during pregnancy suppress ovulation and the hypothalamic-pituitary axis, preventing a second conception."}, {"n": 70, "q": "Portion of placenta contributed by the embryo is the ________", "opts": ["Chorion", "Yolk sac", "Amnion", "Allantois"], "correct": 0, "expl": "The chorion (specifically the chorion frondosum) is the fetal contribution to the placenta; the decidua basalis is the maternal contribution."}, {"n": 71, "q": "Common causes of antepartum haemorrhage (APH, bleeding from the genital tract from 24 weeks' gestation) include which of the following?", "opts": ["Vasa praevia", "Undetermined origin", "Placenta praevia", "Placental abruption"], "correct": 1, "expl": "A large proportion of antepartum haemorrhage cases are ultimately labelled as being of undetermined ('unexplained') origin, even though praevia, abruption, and vasa praevia are the important defined causes."}, {"n": 72, "q": "The commonest cause of all abnormal placenta adherence is", "opts": ["Maternal smoking", "Large placenta", "Previous C/S", "Maternal age"], "correct": 2, "expl": "A prior caesarean section scar is the leading risk factor for the placenta accreta spectrum."}, {"n": 73, "q": "Which of the following placenta adherence has highest maternal and fetal mortality and morbidity", "opts": ["Percreta", "Increta", "Vilamentous", "Accreta"], "correct": 0, "expl": "Placenta percreta, where placental tissue invades through the uterine wall and can involve adjacent organs, carries the greatest maternal/fetal risk of the accreta spectrum."}, {"n": 74, "q": "Sonographic features of placenta abruptio include the following except", "opts": ["Blood in fetal abdomen", "Retroplacental lake", "Separation around the placental edge", "Placental migration away from the detached area"], "correct": 3, "expl": "There is no phenomenon of the placenta 'migrating away' from a detached area; retroplacental clot/lake, marginal separation, and (in severe cases) hemoperitoneum are recognised abruption features."}, {"n": 75, "q": "Abruption is said to occur if there is premature placenta detachment", "opts": ["Before 20 weeks GA but before 2nd stage of labor", "After 20 weeks GA but before 2nd stage of labor", "After 20 weeks GA but after 2nd stage of labor", "Before 20 weeks GA but after 2nd stage of labor"], "correct": 1, "expl": "Placental abruption is defined as premature separation occurring after 20 weeks' gestation and before the second stage of labour."}, {"n": 76, "q": "A low-lying placenta at 18 weeks GA should be rescanned after 4-6 weeks because", "opts": ["Trophotropism might occur later", "To check for placenta and fibroid mass", "To check for placenta insertion", "To check for placenta migration"], "correct": 0, "expl": "Apparent placental 'migration' away from the os with advancing gestation is explained by trophotropism - differential growth of the lower uterine segment and placenta - which is why rescanning is recommended."}, {"n": 77, "q": "Low-lying placentas should be diagnosed", "opts": ["After 12 weeks GA", "After 15 weeks GA", "After 20 weeks GA", "Only at term."], "correct": 2, "expl": "A definitive diagnosis of low-lying placenta/previa is generally reserved for after 20 weeks, since many apparently low placentas seen earlier resolve with uterine growth."}, {"n": 78, "q": "Empty bladder is essential during placenta previa assessment because", "opts": ["It provides better view of the leading edge/tip of the placenta in relation to the internal Os of TVS", "It makes the placenta well outlined in TAS", "It makes the patient comfortable", "Empty bladder creates acoustic window to view the placenta."], "correct": 0, "expl": "An over-full bladder can compress the lower uterine segment/cervix and create a false impression of previa; an empty bladder on TVS gives a true, accurate view of the internal os-placental edge relationship."}, {"n": 79, "q": "Placenta previa is best examined on", "opts": ["TAS", "TVS", "TRS", "TPS"], "correct": 1, "expl": "Transvaginal sonography (TVS) gives the clearest, most accurate assessment of the placental edge relative to the internal os and is the gold standard for diagnosing previa."}, {"n": 80, "q": "The following are risk factors of placenta previa except", "opts": ["Multiparity", "Previous caesarean section", "Large placenta", "Fetal presentation"], "correct": 3, "expl": "Fetal presentation is a consequence of an abnormal placental position, not a cause of placenta previa; multiparity, prior C-section, and a large placenta are recognised risk factors."}, {"n": 81, "q": "When placenta covers the internal Os with overlap on the contralateral side, it is known as:", "opts": ["Low-lying placenta", "Type-1-previa", "Type-2-previa", "Type-3-previa"], "correct": 3, "expl": "Placental tissue that not only covers but overlaps well past the internal os onto the opposite side represents the most advanced (complete/total) grade among these choices - type-3 previa."}, {"n": 82, "q": "The movement of placenta from a region to where there is high blood supply is called", "opts": ["Implantation", "Placenta sprouting", "Placentacentation", "Trophotropism"], "correct": 3, "expl": "Trophotropism is the term for differential placental growth toward better-vascularised regions of the uterus."}, {"n": 83, "q": "The following are placenta location except", "opts": ["Lateral", "Medial", "Anterior", "Posterior"], "correct": 1, "expl": "Placentas are conventionally described as anterior, posterior, lateral (left/right), or fundal - 'medial' is not a standard descriptive location."}, {"n": 84, "q": "Early placenta maturation is an indication of", "opts": ["IUGR", "Fetal demise", "Abruption", "Previa"], "correct": 0, "expl": "Premature (early-for-dates) placental grading/calcification is associated with placental insufficiency and intrauterine growth restriction."}, {"n": 85, "q": "Significant basal plate calcification, chorionic plate interrupted by indentations (frequently calcified) that reach up to basal plate are sonographic features of placenta:", "opts": ["Grade III", "Grade I", "Grade 0", "Grade II"], "correct": 0, "expl": "Deep chorionic-plate indentations reaching the basal plate with heavy calcification describe the most mature Grannum Grade III placenta."}, {"n": 86, "q": "The placenta arteries are formed by", "opts": ["Radial artery", "Arcuate artery", "Basal artery", "Spiral artery"], "correct": 3, "expl": "The spiral arteries, remodelled by trophoblastic invasion, are the maternal vessels that directly supply the intervillous space of the placenta."}, {"n": 87, "q": "Chorioamniotic separation is characterized sonographically by", "opts": ["Fetal demise", "Intra-placenta anechoic clot", "Retro-amniotic or retroplacental hypoechoic collection", "None of the above"], "correct": 2, "expl": "Chorioamniotic separation is seen as free fluid/hypoechoic space between the amnion and chorion (or retroplacental) rather than the two membranes lying fused together."}, {"n": 88, "q": "Amniotic band occurs as a result of ruptured?", "opts": ["Amnion", "Chorion", "Gestational sac", "Placenta"], "correct": 0, "expl": "Amniotic band sequence results from early rupture of the amnion, with fibrous bands entrapping fetal parts."}, {"n": 89, "q": "\"Double bleb\" sign is combination of", "opts": ["Amniotic membrane and placenta", "Yolk sac and amnion", "Chorion and amnion", "Decidua parietalis and capsularis"], "correct": 1, "expl": "The 'double bleb' sign of the early embryonic disc refers to the adjacent amniotic cavity and secondary yolk sac, each appearing as a small bleb."}, {"n": 90, "q": "The yolk sac performs the function of the placenta and stops at", "opts": ["8th weeks", "10th week", "12th week", "12th week"], "correct": 1, "expl": "The secondary yolk sac provides early nutritive/hematopoietic function until the placental circulation takes over, regressing by around the 10th week."}, {"n": 91, "q": "A thin membrane on the inner side of the fetal placenta which completely surrounds the embryo and delimits the amniotic cavity is known as", "opts": ["Chorion", "Decidua", "Amnion", "Frondosum"], "correct": 2, "expl": "The amnion is the thin inner membrane that directly surrounds the embryo/fetus and encloses the amniotic cavity."}, {"n": 92, "q": "The umbilical cord consists of", "opts": ["2 arteries and 1 vein", "2 veins and 1 artery", "2 arteries and 2 veins", "None of the above"], "correct": 0, "expl": "A normal umbilical cord contains two umbilical arteries and one umbilical vein embedded in Wharton's jelly."}, {"n": 93, "q": "The following is/are transport across the placenta membrane through active transport", "opts": ["CO2 and O2", "Amino acids", "Glucose", "Lipids"], "correct": 1, "expl": "Amino acids are transported across the placenta by active transport, requiring energy to move against a concentration gradient; gases diffuse passively and glucose largely uses facilitated diffusion."}, {"n": 94, "q": "Transport of material across the placenta could be affected by", "opts": ["Size of placenta", "Maternal weight", "Fetal weight", "Maternal health"], "correct": 3, "expl": "Overall maternal health (e.g. vascular disease, hypertension, diabetes) is the broadest and most direct determinant of placental transport efficiency among the choices given."}, {"n": 95, "q": "Mechanism of transport across the placenta include the following except", "opts": ["Diffusion", "Active transport", "Osmosis", "Facilitated diffusion"], "correct": 2, "expl": "The classically taught placental transport mechanisms are simple diffusion, facilitated diffusion, active transport, and pinocytosis/bulk flow; osmosis (bulk water movement) is not typically listed as a discrete placental transport category in this scheme."}, {"n": 96, "q": "The following are function of the placenta except", "opts": ["Endocrine", "Exocrine", "Respiratory", "None of the above"], "correct": 1, "expl": "The placenta has recognised endocrine, respiratory, transport, and immunological functions - but it is not described as having an 'exocrine' function."}, {"n": 97, "q": "The part of the decidua that covers the conceptus is called", "opts": ["Capsularis", "Basalis", "Parietalis", "Reflexa"], "correct": 0, "expl": "The decidua capsularis is the thin layer of decidua that overlies and encloses the developing conceptus."}, {"n": 98, "q": "Exchange of gases and supply of nutrient in the placenta occurs at", "opts": ["Chorionic villi", "Capillary villi", "Mesenchymal cells", "Decidua capsularis"], "correct": 0, "expl": "Maternal-fetal exchange of gases and nutrients occurs across the chorionic villi bathed by maternal blood in the intervillous space."}, {"n": 99, "q": "Placenta originated from", "opts": ["The mesoderm", "Mesenchyme at 3rd week", "Endoderm at 13th week", "Mesenchyme at 13th week"], "correct": 1, "expl": "The vascular core of the chorionic villi (and much of the placental structure) develops from extraembryonic mesenchyme beginning around the third week."}, {"n": 100, "q": "Placenta has two components, the fetal and maternal parts which correspond to ------------ & ------------ respectively", "opts": ["Decidua basalis and chorion frondosum", "Chorionic villi and decidua capsularis", "Decidua parietalis and chorionic villi", "Chorion frondosum and decidua basalis"], "correct": 3, "expl": "The fetal contribution to the placenta is the chorion frondosum, and the maternal contribution is the decidua basalis."}]</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var SUPABASE_URL = "https://wyxejfjmtbcdaunipxpi.supabase.co";
+  var SUPABASE_PUBLISHABLE_KEY = "sb_publishable_DWOMxasUNN3WJVWcIg520Q_YMrheEXy";
+  var supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  var DATA = JSON.parse(document.getElementById('quiz-data').textContent);
+  var TOTAL_SECONDS = 90 * 60;
+  var LETTERS = ['A','B','C','D'];
+
+  var state = {
+    answers: new Array(DATA.length).fill(null),
+    remaining: TOTAL_SECONDS,
+    timerHandle: null,
+    started: false,
+    finished: false,
+    startedAt: null
+  };
+
+  var startScreen = document.getElementById('startScreen');
+  var quizScreen = document.getElementById('quizScreen');
+  var resultsScreen = document.getElementById('resultsScreen');
+  var startBtn = document.getElementById('startBtn');
+  var timerEl = document.getElementById('timer');
+  var progressText = document.getElementById('progressText');
+  var barFill = document.getElementById('barFill');
+  var paletteEl = document.getElementById('palette');
+  var qlistEl = document.getElementById('qlist');
+  var submitBtn = document.getElementById('submitBtn');
+  var finalCount = document.getElementById('finalCount');
+
+  function fmtTime(s){
+    var m = Math.floor(s/60);
+    var sec = s % 60;
+    return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+  }
+
+  function buildPalette(){
+    paletteEl.innerHTML = '';
+    DATA.forEach(function(q, i){
+      var cell = document.createElement('div');
+      cell.className = 'pcell';
+      cell.textContent = (i+1);
+      cell.addEventListener('click', function(){
+        var block = document.getElementById('q-' + i);
+        if(block){ block.scrollIntoView({behavior:'smooth', block:'start'}); }
+      });
+      paletteEl.appendChild(cell);
+    });
+  }
+
+  function refreshPalette(){
+    var cells = paletteEl.children;
+    for(var i=0;i<cells.length;i++){
+      cells[i].classList.toggle('answered', state.answers[i] !== null);
+    }
+  }
+
+  function buildQuestionList(){
+    qlistEl.innerHTML = '';
+    DATA.forEach(function(q, i){
+      var block = document.createElement('div');
+      block.className = 'qblock';
+      block.id = 'q-' + i;
+
+      var numEl = document.createElement('div');
+      numEl.className = 'qnum';
+      numEl.textContent = 'Question ' + (i+1) + ' of ' + DATA.length;
+
+      var textEl = document.createElement('p');
+      textEl.className = 'qtext';
+      textEl.textContent = q.q;
+
+      var optsWrap = document.createElement('div');
+
+      q.opts.forEach(function(opt, oi){
+        var label = document.createElement('label');
+        label.className = 'opt';
+        label.innerHTML =
+          '<input type="radio" name="q' + i + '">' +
+          '<span class="letter">' + LETTERS[oi] + '.</span>' +
+          '<span>' + opt + '</span>';
+        label.addEventListener('click', function(){
+          selectAnswer(i, oi, block);
+        });
+        optsWrap.appendChild(label);
+      });
+
+      block.appendChild(numEl);
+      block.appendChild(textEl);
+      block.appendChild(optsWrap);
+      qlistEl.appendChild(block);
+    });
+  }
+
+  function selectAnswer(qIndex, optIndex, block){
+    state.answers[qIndex] = optIndex;
+    var opts = block.querySelectorAll('.opt');
+    opts.forEach(function(o, oi){
+      o.classList.toggle('selected', oi === optIndex);
+      var input = o.querySelector('input');
+      input.checked = (oi === optIndex);
+    });
+    block.classList.add('answered');
+    refreshPalette();
+    updateProgress();
+
+    // auto-advance: scroll smoothly to the next question, if any
+    var next = document.getElementById('q-' + (qIndex + 1));
+    if(next){
+      setTimeout(function(){
+        next.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 220);
+    } else {
+      setTimeout(function(){
+        document.getElementById('submitPanel').scrollIntoView({behavior:'smooth', block:'start'});
+      }, 220);
+    }
+  }
+
+  function updateProgress(){
+    var answered = state.answers.filter(function(a){return a!==null;}).length;
+    progressText.textContent = answered + ' of ' + DATA.length + ' answered';
+    barFill.style.width = ((answered / DATA.length) * 100) + '%';
+    finalCount.textContent = answered === DATA.length
+      ? 'All 100 questions answered. Ready to submit.'
+      : (DATA.length - answered) + ' question(s) still unanswered.';
+  }
+
+  function tick(){
+    state.remaining--;
+    timerEl.textContent = fmtTime(Math.max(state.remaining,0));
+    timerEl.classList.toggle('low', state.remaining <= 300);
+    if(state.remaining <= 0){
+      finishExam(true);
+    }
+  }
+
+  function startExam(){
+    var candidateName = document.getElementById('candidateName').value.trim();
+    var studentId = document.getElementById('studentId').value.trim();
+
+    if(!candidateName || !studentId){
+      alert('Please enter your student name and student ID before starting the exam.');
+      return;
+    }
+
+    state.startedAt = new Date();
+    state.started = true;
+    startScreen.style.display = 'none';
+    quizScreen.style.display = 'block';
+    buildPalette();
+    buildQuestionList();
+    updateProgress();
+    timerEl.textContent = fmtTime(state.remaining);
+    state.timerHandle = setInterval(tick, 1000);
+  }
+
+  function finishExam(auto){
+    if(state.finished) return;
+    if(!auto){
+      var unanswered = state.answers.filter(function(a){return a===null;}).length;
+      if(unanswered > 0){
+        var ok = confirm('You have ' + unanswered + ' unanswered question(s). Submit anyway?');
+        if(!ok){ return; }
+      }
+    }
+    state.finished = true;
+    clearInterval(state.timerHandle);
+    quizScreen.style.display = 'none';
+    showResults(auto);
+  }
+
+  async function saveQuizAttempt(correctCount, incorrectCount, skippedCount, timedOut){
+    var candidateName = document.getElementById('candidateName').value.trim();
+    var studentId = document.getElementById('studentId').value.trim();
+    var totalQuestions = DATA.length;
+    var percentage = Math.round((correctCount / totalQuestions) * 100);
+    var completedAt = new Date();
+    var timeTakenSeconds = Math.max(0, TOTAL_SECONDS - state.remaining);
+
+    var { data, error } = await supabaseClient
+      .from('quiz_attempts')
+      .insert([{
+        student_name: candidateName,
+        student_id: studentId,
+        exam_title: 'Obstetric Sonography — Module 1 Mock Exam',
+        exam_file: 'Obstetric_Sonography_Module1_Mock_Exam_1.html',
+        score: correctCount,
+        total_questions: totalQuestions,
+        percentage: percentage,
+        time_taken_seconds: timeTakenSeconds,
+        started_at: state.startedAt ? state.startedAt.toISOString() : null,
+        completed_at: completedAt.toISOString()
+      }])
+      .select();
+
+    if(error){
+      console.error('Failed to save quiz attempt:', error);
+      return;
+    }
+
+    console.log('Quiz attempt saved successfully:', data);
+  }
+
+  function showResults(timedOut){
+    resultsScreen.style.display = 'block';
+    var correctCount = 0, incorrectCount = 0, skippedCount = 0;
+    var reviewList = document.getElementById('reviewList');
+    reviewList.innerHTML = '';
+
+    DATA.forEach(function(q, i){
+      var given = state.answers[i];
+      var status;
+      if(given === null){ status = 'skipped'; skippedCount++; }
+      else if(given === q.correct){ status = 'correct'; correctCount++; }
+      else { status = 'incorrect'; incorrectCount++; }
+
+      var item = document.createElement('div');
+      item.className = 'reviewItem ' + status;
+      item.dataset.status = status;
+
+      var tagHtml = '<span class="tag ' + status + '">' + status + '</span>';
+      var yourLine = given === null
+        ? '<div class="rline">You did not answer this question.</div>'
+        : '<div class="rline your">Your answer: ' + LETTERS[given] + '. ' + q.opts[given] + '</div>';
+      var correctLine = (status === 'incorrect' || status === 'skipped')
+        ? '<div class="rline correctline">Correct answer: ' + LETTERS[q.correct] + '. ' + q.opts[q.correct] + '</div>'
+        : '<div class="rline correctline">Correct — ' + LETTERS[q.correct] + '. ' + q.opts[q.correct] + '</div>';
+
+      item.innerHTML =
+        '<p class="rq">' + tagHtml + (i+1) + '. ' + q.q + '</p>' +
+        yourLine + correctLine +
+        '<div class="rexpl"><strong>Why:</strong> ' + q.expl + '</div>';
+      reviewList.appendChild(item);
+    });
+
+    var pct = Math.round((correctCount / DATA.length) * 100);
+    document.getElementById('scoreCircle').textContent = pct + '%';
+    document.getElementById('scoreHeadline').textContent = correctCount + ' / ' + DATA.length + ' correct';
+    document.getElementById('scoreSub').textContent =
+      (timedOut ? 'Time expired — exam auto-submitted. ' : 'Submitted manually. ') +
+      correctCount + ' correct, ' + incorrectCount + ' incorrect, ' + skippedCount + ' unanswered.';
+
+    saveQuizAttempt(correctCount, incorrectCount, skippedCount, timedOut);
+
+    var filterBtns = document.querySelectorAll('.filterBtn');
+    filterBtns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        filterBtns.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var f = btn.dataset.filter;
+        document.querySelectorAll('.reviewItem').forEach(function(el){
+          el.style.display = (f === 'all' || el.dataset.status === f) ? '' : 'none';
+        });
+      });
+    });
+
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  startBtn.addEventListener('click', startExam);
+  submitBtn.addEventListener('click', function(){ finishExam(false); });
+
+  window.addEventListener('beforeunload', function(e){
+    if(state.started && !state.finished){
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+})();
+
+</script>
+</body>
+</html>
