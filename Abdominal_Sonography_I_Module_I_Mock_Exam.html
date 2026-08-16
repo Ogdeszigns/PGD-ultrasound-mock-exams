@@ -535,7 +535,52 @@ showResults(auto);
 
     window.scrollTo({top:0, behavior:'smooth'});
   }
+async function saveAttemptToSupabase(auto) {
+  var correctCount = 0;
 
+  DATA.forEach(function(q, i) {
+    if (state.answers[i] === q.correct) {
+      correctCount++;
+    }
+  });
+
+  var percentage = Math.round(
+    (correctCount / DATA.length) * 100
+  );
+
+  var timeTakenSeconds =
+    TOTAL_SECONDS - state.remaining;
+
+  var studentName =
+    document.getElementById('candidateName').value.trim();
+
+  var studentId =
+    document.getElementById('studentId').value.trim();
+
+  var attempt = {
+    student_name: studentName,
+    student_id: studentId,
+    exam_title: 'Abdominal Sonography I — Module I Mock Examination',
+    exam_file: 'Abdominal_Sonography_I_Module_I_Mock_Exam.html',
+    score: correctCount,
+    total_questions: DATA.length,
+    percentage: percentage,
+    time_taken_seconds: timeTakenSeconds,
+    started_at: state.startedAt.toISOString(),
+    completed_at: state.completedAt.toISOString()
+  };
+
+  const { data, error } =
+    await supabaseClient
+      .from('quiz_attempts')
+      .insert([attempt]);
+
+  if (error) {
+    console.error('Could not save quiz attempt:', error);
+  } else {
+    console.log('Quiz attempt successfully saved:', data);
+  }
+}
   startBtn.addEventListener('click', startExam);
   submitBtn.addEventListener('click', function(){ finishExam(false); });
 
