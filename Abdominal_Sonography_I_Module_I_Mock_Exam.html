@@ -423,6 +423,43 @@
     state.timerHandle = setInterval(tick, 1000);
 }
 
+  async function saveQuizAttempt(correctCount, timedOut){
+  const candidateName = document.getElementById('candidateName').value.trim();
+  const studentId = document.getElementById('studentId').value.trim();
+
+  const totalQuestions = DATA.length;
+  const percentage = Math.round((correctCount / totalQuestions) * 100);
+
+  const completedAt = new Date();
+
+  const timeTakenSeconds = Math.max(
+    0,
+    TOTAL_SECONDS - state.remaining
+  );
+
+  const { data, error } = await supabaseClient
+    .from('quiz_attempts')
+    .insert([{
+      student_name: candidateName,
+      student_id: studentId,
+      exam_title: 'Abdominal Sonography I — Module I Mock Exam',
+      exam_file: 'Abdominal_Sonography_I_Module_I_Mock_Exam.html',
+      score: correctCount,
+      total_questions: totalQuestions,
+      percentage: percentage,
+      time_taken_seconds: timeTakenSeconds,
+      started_at: state.startedAt
+        ? state.startedAt.toISOString()
+        : null,
+      completed_at: completedAt.toISOString()
+    }]);
+
+  if (error) {
+    console.error('Failed to save quiz attempt:', error);
+  } else {
+    console.log('Quiz attempt saved successfully:', data);
+  }
+}
   function finishExam(auto){
     if(state.finished) return;
     if(!auto){
@@ -469,7 +506,11 @@
         '<div class="rexpl"><strong>Why:</strong> ' + q.expl + '</div>';
       reviewList.appendChild(item);
     });
-
+   saveQuizAttempt(
+  correctCount,
+  timedOut
+);
+    
     var pct = Math.round((correctCount / DATA.length) * 100);
     document.getElementById('scoreCircle').textContent = pct + '%';
     document.getElementById('scoreHeadline').textContent = correctCount + ' / ' + DATA.length + ' correct';
