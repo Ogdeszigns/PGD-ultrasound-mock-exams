@@ -82,10 +82,13 @@
       return;
     }
 
-    console.log("Admin login successful:", data.user);
+   console.log("Admin login successful:", data.user);
 
-    loginMessage.textContent =
-      "Login successful!";
+loginMessage.textContent =
+  "Login successful!";
+
+document.getElementById("loginPanel").style.display = "none";
+document.getElementById("adminDashboard").style.display = "block";
   });
 </script>
   
