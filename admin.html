@@ -124,6 +124,28 @@ resultsPanel.style.display = "block";
   }
 
   console.log("Quiz attempts loaded:", data);
+      const tableBody = document.getElementById("resultsTableBody");
+
+tableBody.innerHTML = "";
+
+data.forEach(function(attempt) {
+
+  const row = document.createElement("tr");
+
+  row.innerHTML = `
+    <td>${attempt.student_name || ""}</td>
+    <td>${attempt.student_id || ""}</td>
+    <td>${attempt.exam_title || ""}</td>
+    <td>${attempt.score || ""}</td>
+    <td>${attempt.total_questions || ""}</td>
+    <td>${attempt.percentage || ""}%</td>
+    <td>${attempt.time_taken_seconds || ""} sec</td>
+    <td>${attempt.started_at || ""}</td>
+    <td>${attempt.completed_at || ""}</td>
+  `;
+
+  tableBody.appendChild(row);
+});
 }
     loadQuizAttempts();
 document.getElementById("loginPanel").style.display = "none";
