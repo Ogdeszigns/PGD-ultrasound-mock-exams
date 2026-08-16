@@ -125,6 +125,8 @@ resultsPanel.style.display = "block";
 
   console.log("Quiz attempts loaded:", data);
       const tableBody = document.getElementById("resultsTableBody");
+      const attemptCount = document.getElementById("attemptCount");
+attemptCount.textContent = data.length;
 
 tableBody.innerHTML = "";
 
