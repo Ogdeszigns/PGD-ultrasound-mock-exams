@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RearView | PGD Ultrasound Mock Exams</title>
+
+    <meta
+        name="description"
+        content="RearView PGD Medical Ultrasound Mock Examination Dashboard"
+    >
+
+    <style>
+        :root {
+            --primary: #0b5cab;
+            --primary-dark: #073b73;
+            --primary-light: #eaf4ff;
+            --accent: #14b8a6;
+            --background: #f4f8fc;
+            --surface: #ffffff;
+            --text: #122033;
+            --muted: #6b7b8f;
+            --border: #e2eaf2;
+            --success: #16a34a;
+            --shadow: 0 12px 35px rgba(20, 55, 90, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Arial,
+                sans-serif;
+
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* =========================
+           SIDEBAR
+        ========================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: #062d57;
+            color: white;
+            padding: 28px 18px;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px 35px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .brand-name {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-subtitle {
+            font-size: 10px;
+            color: #a9c5e3;
+            margin-top: 2px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-title {
+            font-size: 10px;
+            color: #8eafd0;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            padding: 0 12px;
+            margin-bottom: 10px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            color: #c8d9ea;
+            font-size: 14px;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.12);
+            color: white;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-icon {
+            width: 22px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        .main {
+            margin-left: 250px;
+            min-height: 100vh;
+        }
+
+        /* =========================
+           TOPBAR
+        ========================= */
+
+        .topbar {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .breadcrumb strong {
+            color: var(--text);
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        /* =========================
+           CONTENT
+        ========================= */
+
+        .content {
+            max-width: 1350px;
+            margin: auto;
+            padding: 38px 40px 60px;
+        }
+
+        /* =========================
+           WELCOME
+        ========================= */
+
+        .welcome {
+            background:
+                linear-gradient(
+                    125deg,
+                    #073b73,
+                    #0b5cab 65%,
+                    #087f8c
+                );
+
+            border-radius: 22px;
+            padding: 38px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .welcome::after {
+            content: "◉";
+            position: absolute;
+            right: 50px;
+            top: 20px;
+            font-size: 170px;
+            opacity: 0.07;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+        }
+
+        .welcome-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #bfe0ff;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .welcome h1 {
+            font-size: clamp(28px, 4vw, 42px);
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+
+        .welcome p {
+            color: #dcecff;
+            font-size: 15px;
+            max-width: 650px;
+        }
+
+        /* =========================
+           STATISTICS
+        ========================= */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+
+        .stat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .stat-note {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+
+        /* =========================
+           SECTION HEADER
+        ========================= */
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section-title h2 {
+            font-size: 23px;
+            margin-bottom: 3px;
+        }
+
+        .section-title p {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        .search-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search {
+            width: 250px;
+            padding: 11px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            outline: none;
+            font-size: 13px;
+            background: white;
+        }
+
+        .search:focus {
+            border-color: var(--primary);
+        }
+
+        .filter {
+            padding: 11px 13px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        /* =========================
+           COURSE GRID
+        ========================= */
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .course-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px;
+            transition: 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 300px;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            border-color: #b9d8f5;
+            box-shadow: 0 18px 40px rgba(15, 60, 100, 0.11);
+        }
+
+        .course-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .course-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            background: var(--primary-light);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+            font-weight: 700;
+        }
+
+        .status {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--success);
+            background: #ecfdf3;
+            padding: 5px 8px;
+            border-radius: 20px;
+        }
+
+        .course-card h3 {
+            font-size: 18px;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+
+        .course-card p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 17px;
+        }
+
+        .course-meta {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .course-meta span {
+            background: #f3f7fb;
+            color: #536579;
+            border-radius: 7px;
+            padding: 5px 8px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .course-footer {
+            margin-top: auto;
+        }
+
+        .start-button {
+            display: block;
+            width: 100%;
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .start-button:hover {
+            background: var(--primary-dark);
+        }
+
+        /* =========================
+           EMPTY
+        ========================= */
+
+        .empty {
+            display: none;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 50px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            margin-top: 55px;
+            padding-top: 25px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* =========================
+           TABLET
+        ========================= */
+
+        @media (max-width: 1050px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .course-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 720px) {
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 16px;
+            }
+
+            .brand {
+                padding-bottom: 10px;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .topbar {
+                padding: 0 18px;
+                height: 60px;
+            }
+
+            .profile {
+                display: none;
+            }
+
+            .content {
+                padding: 20px 15px 45px;
+            }
+
+            .welcome {
+                padding: 27px 22px;
+                border-radius: 17px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat {
+                padding: 16px;
+            }
+
+            .stat-value {
+                font-size: 23px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-area {
+                width: 100%;
+            }
+
+            .search {
+                width: 100%;
+            }
+
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                R
+            </div>
+
+            <div>
+                <div class="brand-name">
+                    RearView
+                </div>
+
+                <div class="brand-subtitle">
+                    Medical Learning
+                </div>
+            </div>
+
+        </div>
+
+
+        <nav class="nav">
+
+            <div class="nav-title">
+                Dashboard
+            </div>
+
+            <a href="#" class="nav-item active">
+                <span class="nav-icon">⌂</span>
+                Dashboard
+            </a>
+
+            <a href="#courses" class="nav-item">
+                <span class="nav-icon">▣</span>
+                Mock Exams
+            </a>
+
+            <a href="#courses" class="nav-item">
+                <span class="nav-icon">◈</span>
+                Subjects
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+
+    <main class="main">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="breadcrumb">
+                RearView / <strong>PGD Ultrasound</strong>
+            </div>
+
+            <div class="profile">
+
+                <div class="profile-avatar">
+                    R
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <div class="content">
+
+
+            <!-- WELCOME -->
+
+            <section class="welcome">
+
+                <div class="welcome-content">
+
+                    <div class="welcome-label">
+                        PGD Medical Ultrasound
+                    </div>
+
+                    <h1>
+                        Mock Examination Dashboard
+                    </h1>
+
+                    <p>
+                        Strengthen your knowledge, test your understanding,
+                        and prepare for your examinations with structured
+                        ultrasound mock exams.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- STATISTICS -->
+
+            <section class="stats">
+
+                <div class="stat">
+
+                    <div class="stat-top">
+
+                        <span class="stat-label">
+                            Mock Exams
+                        </span>
+
+                        <div class="stat-icon">
+                            ✓
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="examCount"
+                    >
+                        5
+                    </div>
+
+                    <div class="stat-note">
+                        Available examinations
+                    </div>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <div class="stat-top">
+
+                        <span class="stat-label">
+                            Subjects
+                        </span>
+
+                        <div class="stat-icon">
+                            ◈
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="subjectCount"
+                    >
+                        5
+                    </div>
+
+                    <div class="stat-note">
+                        Current subject areas
+                    </div>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <div class="stat-top">
+
+                        <span class="stat-label">
+                            Courses
+                        </span>
+
+                        <div class="stat-icon">
+                            +
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="stat-value"
+                        id="courseCount"
+                    >
+                        1
+                    </div>
+
+                    <div class="stat-note">
+                        PGD Ultrasound
+                    </div>
+
+                </div>
+
+
+                <div class="stat">
+
+                    <div class="stat-top">
+
+                        <span class="stat-label">
+                            Status
+                        </span>
+
+                        <div class="stat-icon">
+                            ●
+                        </div>
+
+                    </div>
+
+                    <div class="stat-value">
+                        Live
+                    </div>
+
+                    <div class="stat-note">
+                        Exams ready to launch
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- COURSE SECTION -->
+
+            <section id="courses">
+
+                <div class="section-header">
+
+                    <div class="section-title">
+
+                        <h2>
+                            Mock Exams
+                        </h2>
+
+                        <p>
+                            Select a subject to begin your practice examination.
+                        </p>
+
+                    </div>
+
+
+                    <div class="search-area">
+
+                        <input
+                            type="search"
+                            id="searchInput"
+                            class="search"
+                            placeholder="Search exams..."
+                        >
+
+                        <select
+                            id="categoryFilter"
+                            class="filter"
+                        >
+
+                            <option value="all">
+                                All
+                            </option>
+
+                            <option value="abdominal">
+                                Abdominal
+                            </option>
+
+                            <option value="physics">
+                                Physics
+                            </option>
+
+                            <option value="gynaecology">
+                                Gynaecology
+                            </option>
+
+                            <option value="obstetrics">
+                                Obstetrics
+                            </option>
+
+                            <option value="pathology">
+                                Pathology
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- COURSE GRID -->
+
+                <div
+                    class="course-grid"
+                    id="courseGrid"
+                >
+
+
+                    <!-- ABDOMINAL -->
+
+                    <article
+                        class="course-card"
+                        data-category="abdominal"
+                    >
+
+                        <div class="course-top">
+
+                            <div class="course-icon">
+                                ◉
+                            </div>
+
+                            <span class="status">
+                                AVAILABLE
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Abdominal Sonography I
+                        </h3>
+
+                        <p>
+                            Module I mock examination covering
+                            fundamental abdominal sonography concepts.
+                        </p>
+
+                        <div class="course-meta">
+
+                            <span>
+                                MODULE I
+                            </span>
+
+                            <span>
+                                ABDOMINAL
+                            </span>
+
+                        </div>
+
+                        <div class="course-footer">
+
+                            <a
+                                href="Abdominal_Sonography_I_Module_I_Mock_Exam.html"
+                                class="start-button"
+                            >
+                                Start Exam →
+                            </a>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- PHYSICS -->
+
+                    <article
+                        class="course-card"
+                        data-category="physics"
+                    >
+
+                        <div class="course-top">
+
+                            <div class="course-icon">
+                                λ
+                            </div>
+
+                            <span class="status">
+                                AVAILABLE
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Basic Physics of Ultrasound
+                        </h3>
+
+                        <p>
+                            Module 1 examination covering the physics
+                            and fundamental principles of ultrasound.
+                        </p>
+
+                        <div class="course-meta">
+
+                            <span>
+                                MODULE 1
+                            </span>
+
+                            <span>
+                                PHYSICS
+                            </span>
+
+                        </div>
+
+                        <div class="course-footer">
+
+                            <a
+                                href="Basic_Physics_of_Ultrasound_Module1_Mock_Exam.html"
+                                class="start-button"
+                            >
+                                Start Exam →
+                            </a>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- GYNAECOLOGY -->
+
+                    <article
+                        class="course-card"
+                        data-category="gynaecology"
+                    >
+
+                        <div class="course-top">
+
+                            <div class="course-icon">
+                                ♀
+                            </div>
+
+                            <span class="status">
+                                AVAILABLE
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Gynaecological Sonography
+                        </h3>
+
+                        <p>
+                            Module 1 examination focused on
+                            gynaecological ultrasound applications.
+                        </p>
+
+                        <div class="course-meta">
+
+                            <span>
+                                MODULE 1
+                            </span>
+
+                            <span>
+                                GYNAECOLOGY
+                            </span>
+
+                        </div>
+
+                        <div class="course-footer">
+
+                            <a
+                                href="Gynecological_Sonography_Module1_Mock_Exam.html"
+                                class="start-button"
+                            >
+                                Start Exam →
+                            </a>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- OBSTETRICS -->
+
+                    <article
+                        class="course-card"
+                        data-category="obstetrics"
+                    >
+
+                        <div class="course-top">
+
+                            <div class="course-icon">
+                                ♡
+                            </div>
+
+                            <span class="status">
+                                AVAILABLE
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Obstetric Sonography
+                        </h3>
+
+                        <p>
+                            Module 1 examination covering obstetric
+                            ultrasound and fetal assessment.
+                        </p>
+
+                        <div class="course-meta">
+
+                            <span>
+                                MODULE 1
+                            </span>
+
+                            <span>
+                                OBSTETRICS
+                            </span>
+
+                        </div>
+
+                        <div class="course-footer">
+
+                            <a
+                                href="Obstetric_Sonography_Module1_Mock_Exam_1.html"
+                                class="start-button"
+                            >
+                                Start Exam →
+                            </a>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- PATHOLOGY -->
+
+                    <article
+                        class="course-card"
+                        data-category="pathology"
+                    >
+
+                        <div class="course-top">
+
+                            <div class="course-icon">
+                                +
+                            </div>
+
+                            <span class="status">
+                                AVAILABLE
+                            </span>
+
+                        </div>
+
+                        <h3>
+                            Pathology I
+                        </h3>
+
+                        <p>
+                            Module 1 examination covering pathological
+                            conditions relevant to diagnostic ultrasound.
+                        </p>
+
+                        <div class="course-meta">
+
+                            <span>
+                                MODULE 1
+                            </span>
+
+                            <span>
+                                PATHOLOGY
+                            </span>
+
+                        </div>
+
+                        <div class="course-footer">
+
+                            <a
+                                href="Pathology_I_Module1_Mock_Exam.html"
+                                class="start-button"
+                            >
+                                Start Exam →
+                            </a>
+
+                        </div>
+
+                    </article>
+
+
+                </div>
+
+
+                <!-- EMPTY SEARCH RESULT -->
+
+                <div
+                    class="empty"
+                    id="emptyState"
+                >
+
+                    <h3>
+                        No examinations found
+                    </h3>
+
+                    <p>
+                        Try another search term or subject.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- FOOTER -->
+
+            <footer>
+
+                RearView Medical Learning ·
+                PGD Medical Ultrasound Mock Examinations
+
+            </footer>
+
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         SEARCH / FILTER
+    ========================== -->
+
+    <script>
+
+        const searchInput =
+            document.getElementById("searchInput");
+
+        const categoryFilter =
+            document.getElementById("categoryFilter");
+
+        const cards =
+            document.querySelectorAll(".course-card");
+
+        const emptyState =
+            document.getElementById("emptyState");
+
+        const examCount =
+            document.getElementById("examCount");
+
+        const subjectCount =
+            document.getElementById("subjectCount");
+
+
+        function filterCourses() {
+
+            const search =
+                searchInput.value
+                    .toLowerCase()
+                    .trim();
+
+            const category =
+                categoryFilter.value;
+
+            let visible = 0;
+
+
+            cards.forEach(card => {
+
+                const text =
+                    card.innerText.toLowerCase();
+
+                const cardCategory =
+                    card.dataset.category;
+
+
+                const searchMatch =
+                    text.includes(search);
+
+                const categoryMatch =
+                    category === "all" ||
+                    cardCategory === category;
+
+
+                if (
+                    searchMatch &&
+                    categoryMatch
+                ) {
+
+                    card.style.display = "flex";
+
+                    visible++;
+
+                } else {
+
+                    card.style.display = "none";
+
+                }
+
+            });
+
+
+            examCount.textContent =
+                visible;
+
+            emptyState.style.display =
+                visible === 0
+                    ? "block"
+                    : "none";
+
+        }
+
+
+        searchInput.addEventListener(
+            "input",
+            filterCourses
+        );
+
+
+        categoryFilter.addEventListener(
+            "change",
+            filterCourses
+        );
+
+
+    </script>
+
+</body>
+</html>
