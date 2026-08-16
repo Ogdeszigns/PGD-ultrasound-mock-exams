@@ -49,7 +49,37 @@
       SUPABASE_PUBLISHABLE_KEY
     );
 
-  console.log("Admin Supabase client loaded:", supabaseClient);
+  const loginBtn = document.getElementById("loginBtn");
+  const loginMessage = document.getElementById("loginMessage");
+
+  loginBtn.addEventListener("click", async function () {
+
+    const email =
+      document.getElementById("adminEmail").value.trim();
+
+    const password =
+      document.getElementById("adminPassword").value;
+
+    loginMessage.textContent = "Logging in...";
+
+    const { data, error } =
+      await supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
+
+    if (error) {
+      console.error("Login failed:", error);
+      loginMessage.textContent =
+        "Login failed: " + error.message;
+      return;
+    }
+
+    console.log("Admin login successful:", data.user);
+
+    loginMessage.textContent =
+      "Login successful!";
+  });
 </script>
   
 </body>
