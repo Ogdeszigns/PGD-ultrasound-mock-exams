@@ -41,7 +41,30 @@
   <p>You are logged in as administrator.</p>
 
 </div>
+<div id="resultsPanel" style="display:none;">
 
+  <h2>Quiz Attempts</h2>
+
+  <table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Student Name</th>
+        <th>Student ID</th>
+        <th>Exam Title</th>
+        <th>Score</th>
+        <th>Total Questions</th>
+        <th>Percentage</th>
+        <th>Time Taken</th>
+        <th>Started At</th>
+        <th>Completed At</th>
+      </tr>
+    </thead>
+
+    <tbody id="resultsTableBody">
+    </tbody>
+  </table>
+
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
   const SUPABASE_URL =
