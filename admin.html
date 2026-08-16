@@ -111,6 +111,21 @@ loginMessage.textContent =
   "Login successful!";
 const resultsPanel = document.getElementById("resultsPanel");
 resultsPanel.style.display = "block";
+    async function loadQuizAttempts() {
+
+  const { data, error } = await supabaseClient
+    .from("quiz_attempts")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Failed to load quiz attempts:", error);
+    return;
+  }
+
+  console.log("Quiz attempts loaded:", data);
+}
+    loadQuizAttempts();
 document.getElementById("loginPanel").style.display = "none";
 document.getElementById("adminDashboard").style.display = "block";
   });
