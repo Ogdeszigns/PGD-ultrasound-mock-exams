@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pathology I — Module 1 Mock Exam</title>
+<style>
+  :root{
+    --ink:#0F2438;
+    --ink-soft:#3C5065;
+    --paper:#EEF2F1;
+    --panel:#FFFFFF;
+    --line:#CBD6D6;
+    --accent:#B4392F;      /* report-stamp red */
+    --accent-soft:#F1DAD7;
+    --signal:#1E7D6B;      /* echo-signal teal */
+    --signal-soft:#DCEFEA;
+    --amber:#B8862B;
+    --amber-soft:#F5E9D2;
+    --mono: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--sans);}
+  body{min-height:100vh;}
+  .wrap{max-width:880px;margin:0 auto;padding:24px 18px 80px;}
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    background:var(--ink);
+    color:#EAF0EF;
+    border-radius:10px;
+    padding:22px 24px;
+    position:relative;
+    overflow:hidden;
+    margin-bottom:18px;
+  }
+  .masthead .sweep{
+    position:absolute; top:0; left:-30%; width:60%; height:100%;
+    background:linear-gradient(100deg, transparent, rgba(30,125,107,0.28), transparent);
+    animation:sweep 5.5s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes sweep{
+    0%{ left:-40%; }
+    50%{ left:110%; }
+    100%{ left:110%; }
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:#9FC7BE; margin:0 0 6px;
+  }
+  .masthead h1{
+    font-family:var(--serif); font-weight:700; font-size:26px; margin:0 0 4px; line-height:1.2;
+  }
+  .masthead p.sub{ margin:0; color:#B9C6D0; font-size:13.5px;}
+  .hr-thread{ height:1px; background:linear-gradient(90deg, #2B4356, transparent); margin:16px 0 0;}
+
+  /* ---------- cards ---------- */
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px 22px;
+  }
+  .field-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px 22px; margin:18px 0 22px;
+  }
+  .field-grid .field{border-bottom:1px dashed var(--line); padding-bottom:8px;}
+  .field label{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:4px;}
+  .field .val{font-size:14.5px; font-weight:600;}
+  input[type=text]{
+    width:100%; border:none; border-bottom:1px solid var(--line); background:transparent;
+    font-size:14.5px; font-weight:600; font-family:var(--sans); color:var(--ink); padding:2px 0 6px;
+  }
+  input[type=text]:focus{outline:none; border-bottom-color:var(--signal);}
+
+  button{
+    font-family:var(--sans); font-weight:700; font-size:14.5px; letter-spacing:.01em;
+    border:none; border-radius:7px; padding:12px 20px; cursor:pointer;
+  }
+  .btn-primary{ background:var(--signal); color:#fff; }
+  .btn-primary:hover{ background:#166457; }
+  .btn-primary:disabled{ background:#9CB8B2; cursor:not-allowed; }
+  .btn-ghost{ background:transparent; color:var(--ink-soft); border:1px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--ink-soft); color:var(--ink);}
+  .btn-danger{ background:var(--accent); color:#fff; }
+  .btn-danger:hover{ background:#912a22; }
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .row.between{justify-content:space-between;}
+
+  .note{font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
+  .note.warn{ background:var(--amber-soft); border:1px solid #E4CE9E; color:#6B4E12; padding:10px 12px; border-radius:7px;}
+
+  /* ---------- exam bar (sticky during quiz) ---------- */
+  #examBar{
+    position:sticky; top:0; z-index:5;
+    background:var(--ink); color:#EAF0EF;
+    border-radius:10px; padding:12px 16px; margin-bottom:16px;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    box-shadow:0 6px 18px rgba(15,36,56,0.18);
+  }
+  #timer{
+    font-family:var(--mono); font-size:20px; letter-spacing:.03em; font-weight:600;
+    padding:4px 10px; border-radius:6px; background:rgba(255,255,255,0.08);
+  }
+  #timer.low{ background:rgba(180,57,47,0.35); color:#FFD9D5; }
+  #progressText{font-family:var(--mono); font-size:12px; color:#B9C6D0;}
+  .barTrack{ height:5px; border-radius:3px; background:rgba(255,255,255,0.12); overflow:hidden; margin-top:8px;}
+  .barFill{ height:100%; background:var(--signal); width:0%; transition:width .25s;}
+
+  /* ---------- question palette ---------- */
+  #palette{
+    display:grid; grid-template-columns:repeat(10, 1fr); gap:6px; margin:14px 0 18px;
+  }
+  .pcell{
+    font-family:var(--mono); font-size:11px; text-align:center; padding:6px 0;
+    border-radius:5px; border:1px solid var(--line); background:var(--panel); cursor:pointer; color:var(--ink-soft);
+  }
+  .pcell.answered{ background:var(--signal-soft); border-color:var(--signal); color:var(--signal);}
+  .pcell.current{ outline:2px solid var(--ink); outline-offset:1px;}
+
+  /* ---------- question list ---------- */
+  #qlist{ display:flex; flex-direction:column; gap:14px; margin-bottom:16px; }
+  .qblock{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:18px 20px; scroll-margin-top:96px;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .qblock.answered{ border-color:var(--signal); }
+  .qblock.focused{ box-shadow:0 0 0 3px var(--signal-soft); }
+  .qblock .qnum{font-family:var(--mono); font-size:11px; color:var(--signal); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px;}
+  .qblock .qtext{font-family:var(--serif); font-size:17.5px; line-height:1.4; margin:0 0 14px;}
+  #submitPanel{ padding:24px 22px; }
+
+  .opt{
+    display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border:1px solid var(--line);
+    border-radius:8px; margin-bottom:9px; cursor:pointer; transition:border-color .15s, background .15s;
+  }
+  .opt:hover{ border-color:var(--signal); }
+  .opt input{ margin-top:3px; accent-color:var(--signal); }
+  .opt .letter{font-family:var(--mono); font-weight:700; color:var(--ink-soft); width:16px;}
+  .opt.selected{ border-color:var(--signal); background:var(--signal-soft); }
+  .opt.selected .letter{ color:var(--signal); }
+
+  /* ---------- results ---------- */
+  .scoreCard{ display:flex; align-items:center; gap:22px; margin-bottom:8px;}
+  .scoreCircle{
+    width:88px; height:88px; border-radius:50%; border:6px solid var(--signal);
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono);
+    font-size:20px; font-weight:700; flex:none;
+  }
+  .reviewItem{ border:1px solid var(--line); border-radius:9px; padding:14px 16px; margin-bottom:10px;}
+  .reviewItem.correct{ border-left:5px solid var(--signal);}
+  .reviewItem.incorrect{ border-left:5px solid var(--accent);}
+  .reviewItem.skipped{ border-left:5px solid var(--amber);}
+  .rq{ font-family:var(--serif); font-size:15.5px; margin:0 0 8px; }
+  .rline{ font-size:13.5px; margin:3px 0; }
+  .rline.your{ color:var(--accent); }
+  .rline.correctline{ color:var(--signal); }
+  .rexpl{ font-size:13px; color:var(--ink-soft); margin-top:6px; line-height:1.5; border-top:1px dashed var(--line); padding-top:6px;}
+  .tag{font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.06em; padding:2px 7px; border-radius:4px; margin-right:6px;}
+  .tag.correct{background:var(--signal-soft); color:var(--signal);}
+  .tag.incorrect{background:var(--accent-soft); color:var(--accent);}
+  .tag.skipped{background:var(--amber-soft); color:var(--amber);}
+
+  .filterRow{display:flex; gap:8px; margin:14px 0; flex-wrap:wrap;}
+  .filterBtn{font-family:var(--mono); font-size:11.5px; padding:7px 12px; border-radius:6px; border:1px solid var(--line); background:var(--panel); color:var(--ink-soft); cursor:pointer;}
+  .filterBtn.active{ background:var(--ink); color:#fff; border-color:var(--ink);}
+
+  footer{ text-align:center; color:var(--ink-soft); font-size:11.5px; margin-top:30px; }
+
+  @media (max-width:560px){
+    .field-grid{grid-template-columns:1fr;}
+    #palette{grid-template-columns:repeat(6,1fr);}
+    .masthead h1{font-size:21px;}
+    #qtext{font-size:17px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="sweep"></div>
+    <p class="eyebrow">Nigerian Institute of Radiographers &middot; PGD Medical Ultrasound</p>
+    <h1>Pathology I — Module&nbsp;1 Mock Examination</h1>
+    <p class="sub">70 objective questions &middot; single best answer &middot; self-marking, offline-capable exam simulator</p>
+    <div class="hr-thread"></div>
+  </div>
+
+  <!-- ===================== START SCREEN ===================== -->
+  <div id="startScreen" class="panel">
+    <div class="field-grid">
+      <div class="field">
+        <label>Candidate name (optional)</label>
+        <input type="text" id="candidateName" placeholder="Enter your name">
+      </div>
+      <div class="field">
+        <label>Duration</label>
+        <div class="val">1 hr (60:00)</div>
+      </div>
+      <div class="field">
+        <label>Questions</label>
+        <div class="val">70, single best answer</div>
+      </div>
+      <div class="field">
+        <label>Marking</label>
+        <div class="val">Auto-scored with explanations at the end</div>
+      </div>
+    </div>
+    <p class="note">Once you start, the clock runs continuously for 60 minutes. You can move freely between questions using the palette grid, and the quiz auto-submits when time runs out. Your answers, score and explanations only appear after you submit or time expires — there's no going back to change an answer after that point.</p>
+    <p class="note warn">Answer key note: this exam has no publisher-supplied answer key. Correct answers and explanations were derived from standard references by the assistant that built this quiz — a few items were worded ambiguously (or, in places, incomplete/mis-numbered) in the source paper and needed a best-judgement call, so please cross-check anything you're unsure of against your course material.</p>
+    <div class="row" style="margin-top:16px;">
+      <button class="btn-primary" id="startBtn">Start exam — begin 60:00 clock</button>
+    </div>
+  </div>
+
+  <!-- ===================== QUIZ SCREEN ===================== -->
+  <div id="quizScreen" style="display:none;">
+    <div id="examBar">
+      <div>
+        <div id="progressText">Question 1 of 100</div>
+        <div class="barTrack"><div class="barFill" id="barFill"></div></div>
+      </div>
+      <div id="timer">60:00</div>
+    </div>
+
+    <div class="panel" style="padding:20px 22px 8px;">
+      <div id="palette"></div>
+      <p class="note" style="margin:2px 0 16px;">Answer each question and the list scrolls to the next one for you. You can also scroll or tap a number above to jump anywhere — nothing is locked once answered.</p>
+    </div>
+
+    <div id="qlist"></div>
+
+    <div class="panel" id="submitPanel" style="text-align:center;">
+      <p class="note" id="finalCount" style="margin-bottom:12px;"></p>
+      <button class="btn-danger" id="submitBtn">Submit exam</button>
+    </div>
+  </div>
+
+  <!-- ===================== RESULTS SCREEN ===================== -->
+  <div id="resultsScreen" style="display:none;">
+    <div class="panel">
+      <p class="eyebrow" style="color:var(--signal);">Result</p>
+      <div class="scoreCard">
+        <div class="scoreCircle" id="scoreCircle">--%</div>
+        <div>
+          <div style="font-family:var(--serif); font-size:20px; font-weight:700;" id="scoreHeadline">Score</div>
+          <div class="note" id="scoreSub"></div>
+        </div>
+      </div>
+      <div class="filterRow">
+        <button class="filterBtn active" data-filter="all">All (100)</button>
+        <button class="filterBtn" data-filter="incorrect">Incorrect</button>
+        <button class="filterBtn" data-filter="skipped">Unanswered</button>
+        <button class="filterBtn" data-filter="correct">Correct</button>
+      </div>
+    </div>
+    <div id="reviewList" style="margin-top:14px;"></div>
+  </div>
+
+  <footer>Generated exam simulator &middot; runs entirely in your browser, no server or internet connection required once this page is loaded.</footer>
+</div>
+
+<script id="quiz-data" type="application/json">[{"n": 1, "q": "The following are true of tumour markers except:", "opts": ["Useful for primary diagnosis of cancer", "Useful for screening purposes", "Useful for monitoring for patients on treatment", "Useful for prognosis"], "correct": 0, "expl": "Tumour markers are generally not sensitive or specific enough to make a primary cancer diagnosis on their own; they are more useful for screening, monitoring treatment response, and prognosis."}, {"n": 2, "q": "Which of the followings does not belong the Endocrinopathies of paraneoplastic syndrome?", "opts": ["Cushing syndrome", "Syndrome of Inappropriate ADH Secretion", "Hypercalcaemia", "Acanthosis nigricans"], "correct": 3, "expl": "Cushing syndrome, SIADH, and hypercalcemia are classic paraneoplastic endocrinopathies. Acanthosis nigricans is a paraneoplastic dermatological manifestation, not an endocrinopathy."}, {"n": 3, "q": "The following Ionizing radiations can cause cancer in humans except:", "opts": ["X-rays", "Hydroxyl ions", "\u00df-rays", "Y-rays"], "correct": 1, "expl": "X-rays, beta rays, and gamma rays are forms of ionizing radiation linked to carcinogenesis. Hydroxyl ions are reactive chemical species (free radicals), not a form of radiation."}, {"n": 4, "q": "The followings are features of malignant cells except:", "opts": ["Pleomorphism", "Nuclear Hyperchromasia", "Low nuclear cytoplasmic ratio", "Prominent nucleoli"], "correct": 2, "expl": "Malignant cells characteristically show a HIGH nuclear-to-cytoplasmic ratio (large, crowded nuclei), not a low one."}, {"n": 5, "q": "All following tumours are malignant except:", "opts": ["Hepatoma", "Melanoma", "Seminoma", "Hamartoma"], "correct": 3, "expl": "A hamartoma is a benign, disorganized overgrowth of normal tissue elements native to the site - it is not a malignant tumour."}, {"n": 6, "q": "The followings are true tumours except:", "opts": ["Teratoma", "Seminoma", "Lymphoma", "Haematoma"], "correct": 3, "expl": "A haematoma is simply a collection of blood, not a neoplasm - unlike teratoma, seminoma, and lymphoma, which are all true tumours."}, {"n": 7, "q": "Which of the followings is not a complication of wound healing?", "opts": ["Wound Dehiscence", "Contracture", "Increased in weight", "Keloid"], "correct": 2, "expl": "Dehiscence, contracture, and keloid formation are recognised wound-healing complications. Weight gain has no established connection to wound healing complications."}, {"n": 8, "q": "The followings are local factors that affect wound healing except:", "opts": ["Foreign Body", "Hematoma", "Mechanical stress", "Anaemia"], "correct": 3, "expl": "Foreign body, hematoma, and mechanical stress are local factors at the wound site. Anaemia is a systemic factor affecting oxygen delivery throughout the body, not a local one."}, {"n": 9, "q": "The followings are true of wound healing by first intention except:", "opts": ["Edges are lined up", "Seen in clean incised wound", "Is more likely to be infected", "Usually leaves a very thin scar"], "correct": 2, "expl": "Healing by first intention (clean, apposed wound edges) generally carries a LOWER infection risk than healing by second intention, not a higher one."}, {"n": 10, "q": "The followings are examples of diseases showing granulomatous inflammations except:", "opts": ["Tuberculosis", "Tertiary Syphilis", "Amoebiasis", "Sarcoidosis"], "correct": 2, "expl": "TB, tertiary syphilis, and sarcoidosis are classic granulomatous diseases. Amoebiasis typically causes necrotizing/ulcerative lesions rather than granuloma formation."}, {"n": 11, "q": "Phagocytosis involves all the followings except:", "opts": ["Opsonization", "Endocytosis", "Chemotaxis", "Cytolysis"], "correct": 3, "expl": "Opsonization (tagging), chemotaxis (migration to the site), and endocytosis (engulfment) are steps of phagocytosis. Cytolysis describes cell membrane rupture, a distinct injury mechanism, not a phagocytosis step."}, {"n": 12, "q": "The followings are cells of chronic inflammation except:", "opts": ["Neutrophil", "Macrophage", "Lymphocyte", "Plasma cell"], "correct": 0, "expl": "Macrophages, lymphocytes, and plasma cells characterise chronic inflammation. Neutrophils are the hallmark cell of ACUTE inflammation."}, {"n": 13, "q": "Pathological Hyperplasia occurs in the following settings except:", "opts": ["In Endometrium in Dysfunctional Uterine Bleeding", "In Testis induced by androgens", "In Connective tissue in wound healing", "In Human Papilloma Virus associated warts"], "correct": 2, "expl": "Endometrial DUB-related hyperplasia, androgen-driven testicular hyperplasia, and HPV-related warts are classic pathological hyperplasia examples. Fibroblast/connective-tissue proliferation in wound healing is a normal reparative response, not a pathological hyperplasia."}, {"n": 14, "q": "The followings are caused of pathological atrophy except:", "opts": ["Decreased workload", "Loss of innervation", "Diminished blood supply", "In Acute inflammatory diseases"], "correct": 3, "expl": "Disuse, denervation, and ischemia are classic causes of pathological atrophy, which develops gradually. Acute inflammation is a short-lived process not classically associated with causing atrophy."}, {"n": 15, "q": "Which of the following is a true type of cell death?", "opts": ["Liquefactive necrosis", "Fibrinoid necrosis", "Caseous necrosis", "Gangrenous necrosis"], "correct": 0, "expl": "Liquefactive necrosis (alongside coagulative necrosis) is one of the two classic fundamental patterns of necrotic cell death; caseous, fibrinoid, and gangrenous necrosis are considered more specific morphological variants."}, {"n": 16, "q": "Cellular mechanisms to remove free radicals in the body include all except:", "opts": ["Dismutation", "Antioxidants", "Binding to proteins", "Enzymatic reactions"], "correct": 2, "expl": "Dismutation (via superoxide dismutase), antioxidants, and enzymatic degradation actively neutralise free radicals. Binding to storage/transport proteins (e.g. ceruloplasmin, transferrin) mainly limits free radical generation by sequestering metal catalysts, rather than directly removing existing radicals."}, {"n": 17, "q": "Mechanisms of cell injury include the followings except:", "opts": ["Increased Adenosine Triphosphate", "Increased cell membrane permeability", "Increased intracellular calcium", "Increased oxygen-derived free radicals"], "correct": 0, "expl": "Cell injury classically causes DEPLETION of ATP (due to mitochondrial dysfunction/hypoxia), not an increase."}, {"n": 18, "q": "The followings are ways of infectious agents causing injury to cell except.", "opts": ["Indirectly cause cell death", "Release endotoxins or exotoxins that kill cells at a distance", "Release enzymes that degrade tissue components", "Damage blood vessels and cause ischemic injury"], "correct": 0, "expl": "Toxin release, tissue-degrading enzymes, and vascular damage are direct mechanisms of infectious cell injury; the vaguer 'indirectly cause cell death' does not represent a distinct direct mechanism in the same category as the other three."}, {"n": 19, "q": "Hallmarks of reversible cell injury include the followings except", "opts": ["Reduced oxidation phosphorylation", "Depletion in Adenosine Triphosphate", "Cellular swelling", "Mitochondrial irreversibility"], "correct": 3, "expl": "Reduced oxidative phosphorylation, ATP depletion, and cellular swelling are hallmarks of REVERSIBLE injury. Irreversible mitochondrial damage, by definition, marks the transition to irreversible injury/cell death."}, {"n": 20, "q": "For every disease process the followings are true except:", "opts": ["Aetiology", "Tumourigenesis", "Pathogenesis", "Morphology"], "correct": 1, "expl": "Every disease process is characterised by its aetiology, pathogenesis, and morphologic changes. Tumourigenesis (tumour formation) is specific to neoplastic disease, not a universal feature of every disease."}, {"n": 21, "q": "Dead sperm is also known as", "opts": ["Necrospermia", "Oligospermia", "Acrosomia", "Gangrenous sperm"], "correct": 0, "expl": "Necrospermia refers to the presence of dead (non-viable) sperm in the ejaculate."}, {"n": 22, "q": "Complete absence of sperm cells is referred to as", "opts": ["Oligospermia", "Asthenospermia", "Azoospermia", "Teratospermia"], "correct": 2, "expl": "Azoospermia is the complete absence of sperm in the ejaculate."}, {"n": 23, "q": "The three germ layers from which organs are formed during organogenesis includes the following except:", "opts": ["Ectoderm", "Mesoderm", "Endoderm", "Antederm"], "correct": 3, "expl": "The three true germ layers are ectoderm, mesoderm, and endoderm. 'Antederm' is not a real embryological germ layer."}, {"n": 24, "q": "The two types of cell injury are:", "opts": ["Reversible and irreversible cell injury", "Reversible and regenerating cell injury", "Reversible and degenerating cell injury", "Irreversible and irrevocable cell injury"], "correct": 0, "expl": "Cell injury is classically divided into reversible and irreversible forms, depending on whether the cell can recover once the injurious stimulus is removed."}, {"n": 25, "q": "The following statements are true about cancer except", "opts": ["It could be genetic in aetiology.", "It is sometimes familial", "It may be environmental in aetiology", "It is always incurable"], "correct": 3, "expl": "Cancer can have genetic, familial, or environmental causes, but it is not always incurable - many cancers are treatable or curable, especially when detected early."}, {"n": 26, "q": "All of the following infectious agents are implicated in cancer aetiology except", "opts": ["Hepatitis B virus", "Hookworm infestation", "Helicobacter pylori", "Human immunodeficiency virus"], "correct": 1, "expl": "Hepatitis B (hepatocellular carcinoma), H. pylori (gastric cancer), and HIV (via associated malignancies) are recognised infectious contributors to cancer. Hookworm infestation is not classically linked to carcinogenesis."}, {"n": 27, "q": "One of the following predisposes to cancer", "opts": ["Tobacco smoking", "Exercise", "Drinking tea", "Diet rich in vegetable"], "correct": 0, "expl": "Tobacco smoking is one of the best-established modifiable risk factors for multiple cancers, unlike exercise, tea, or a vegetable-rich diet, which are generally protective or neutral."}, {"n": 28, "q": "Dissemination of cancer occurs in all of the following except", "opts": ["Lymphatic spread", "Neurological spread", "Haematogenous spread", "Direct seeding of body cavities"], "correct": 1, "expl": "Lymphatic spread, haematogenous spread, and direct seeding of body cavities are the three classic routes of cancer dissemination. 'Neurological spread' is not a standard recognised route (though perineural invasion exists as a distinct, more localized phenomenon)."}, {"n": 29, "q": "All of the following are true of malignant tumour except", "opts": ["Capacity to infiltrate", "Localized to the site of origin", "Anaplasia", "Slow growth"], "correct": 1, "expl": "By definition, malignant tumours infiltrate and spread beyond their site of origin - remaining strictly localized is instead a hallmark of benign tumours."}, {"n": 30, "q": "Benign tumours are characterized by the following except", "opts": ["Slow growth", "Metastasis", "Fibrous capsule", "Well differentiation"], "correct": 1, "expl": "Slow growth, encapsulation, and good differentiation are hallmarks of benign tumours. Metastasis is a defining feature of MALIGNANT tumours, not benign ones."}, {"n": 31, "q": "one of the following is not a type of necrosis", "opts": ["Coagulative necrosis", "Gangrenous necrosis", "Liquifactive necrosis", "Granular necrosis"], "correct": 3, "expl": "Coagulative, liquefactive, and gangrenous necrosis are all recognised necrosis patterns. 'Granular necrosis' is not a standard pathology term."}, {"n": 32, "q": "A benign tumor arising in the fibrous tissue is called a", "opts": ["Fibroma", "Benignoma", "Sarcoma", "Fibromatosis"], "correct": 0, "expl": "A benign tumour of fibrous connective tissue origin is called a fibroma (a sarcoma would be its malignant counterpart)."}, {"n": 33, "q": "Tumors that invade and destroy adjacent structures and spread to distant sites to cause death are said to be", "opts": ["Malignant", "Benign", "Mobile", "Frail"], "correct": 0, "expl": "Invasion of adjacent tissue and spread to distant sites defines a malignant tumour."}, {"n": 34, "q": "Hyperplasia is defined by", "opts": ["Increase in cell sizes", "Decrease in cell sizes", "Increase in number of cells", "Decrease in number of cells"], "correct": 2, "expl": "Hyperplasia is an increase in the number of cells in a tissue or organ, distinct from hypertrophy (increase in cell size)."}, {"n": 35, "q": "The following are FALSE about Tuberculosis except:", "opts": ["It is a chronic inflammatory response", "The most important cell is mast cell", "There are non-caseating granulomas", "Resolution is complete without scarring"], "correct": 0, "expl": "TB is indeed a classic chronic (granulomatous) inflammatory response - this is the one TRUE statement. The key cell is the epithelioid macrophage (not mast cell), TB granulomas are typically CASEATING (not non-caseating), and healing usually leaves fibrosis/calcification rather than complete scar-free resolution."}, {"n": 36, "q": "Chronic inflammation is characterized by one of the followings", "opts": ["Short lived", "Neutrophilic infiltration", "Rapid onset", "Fibroblast proliferation"], "correct": 3, "expl": "Chronic inflammation is marked by ongoing tissue repair attempts, including fibroblast proliferation and fibrosis, in contrast to the short-lived, neutrophil-rich picture of acute inflammation."}, {"n": 37, "q": "Acute phase reactions in inflammation include one of the following", "opts": ["Reduced sleep", "Reduced acute phase proteins", "Increased appetite", "Neutrophilia"], "correct": 3, "expl": "The systemic acute-phase response includes fever, increased acute-phase proteins, and neutrophilia (a rise in circulating neutrophils) - not reduced acute-phase proteins or increased appetite."}, {"n": 38, "q": "The following are important to termination of inflammatory response except", "opts": ["Lipoxins", "IL-1", "Resolvins", "TGF-B"], "correct": 1, "expl": "Lipoxins, resolvins, and TGF-beta are mediators that help actively resolve and terminate inflammation. IL-1 is a pro-inflammatory cytokine that promotes and sustains inflammation rather than ending it."}, {"n": 39, "q": "microbial agent include any of the following except", "opts": ["hydrogen peroxide", "lactoferrin", "carbon dioxide", "reactive oxygen species"], "correct": 2, "expl": "Hydrogen peroxide, lactoferrin, and reactive oxygen species are microbicidal substances used by phagocytes to kill pathogens. Carbon dioxide has no antimicrobial killing function."}, {"n": 40, "q": "one of the following is the most important cell of acute inflammation", "opts": ["Lymphocytes", "Neutrophils", "Monocytes", "Eosinophils"], "correct": 1, "expl": "The neutrophil is the dominant and most characteristic cell type recruited in acute inflammation."}, {"n": 41, "q": "One of the following clinical signs is not a feature of acute inflammation", "opts": ["Rubora", "Cachexia", "Tumor", "Calor"], "correct": 1, "expl": "Rubor (redness), tumor (swelling), and calor (heat) are classic cardinal signs of acute inflammation. Cachexia is a chronic wasting syndrome, unrelated to acute inflammation."}, {"n": 42, "q": "Acute inflammation is characterized by the following except:", "opts": ["Rapid in onset", "Short duration", "Exudation of fluid and plasma proteins", "Emigration of leukocytes, predominantly macrophages"], "correct": 3, "expl": "Acute inflammation is characterised by the emigration of leukocytes that are predominantly NEUTROPHILS, not macrophages (which are more characteristic of chronic inflammation)."}, {"n": 43, "q": "The process of remodelling of scar tissues follows these steps", "opts": ["Angiogenesis --- Formation of granulation tissue --- Remodelling of connective tissue.", "Remodelling of connective tissue --- Angiogenesis --- Formation of granulation tissue", "Formation of granulation tissue --- Angiogenesis --- remodelling of connective tissue", "None of the above"], "correct": 0, "expl": "Tissue repair proceeds through angiogenesis (new vessel formation), which supports formation of granulation tissue, followed later by remodelling/maturation of the connective tissue into a scar."}, {"n": 44, "q": "The richest sources of histamine are", "opts": ["Mast cells", "Red cells", "Sperm cells", "Brain cells"], "correct": 0, "expl": "Mast cells (and basophils) are the richest source of stored histamine, released during inflammatory and allergic responses."}, {"n": 45, "q": "The following factors influence tissue repair except", "opts": ["Pain", "Infection", "Poor perfusion", "Diabetis"], "correct": 0, "expl": "Infection, poor tissue perfusion, and diabetes are well-established factors that impair tissue repair. Pain itself is a symptom rather than a physiological factor that directly influences the repair process."}, {"n": 46, "q": "Benign and malignant tumors can be distinguished from one another based on", "opts": ["Degree of differentiation", "Local invasiveness", "Growth", "Cell color"], "correct": 0, "expl": "Degree of differentiation (how closely the tumour resembles normal tissue) is a key distinguishing feature, alongside growth rate and invasiveness - differentiation is the most fundamental single criterion listed here."}, {"n": 47, "q": "Endogenous causes of inflammation include", "opts": ["Thrombosis", "Hepatits B virus", "Acute pancreatitis", "Antigen - antibody reaction"], "correct": 3, "expl": "Antigen-antibody (immune complex) reactions are an endogenous (internally generated) cause of inflammation, unlike infectious agents such as hepatitis B virus, which are exogenous causes."}, {"n": 48, "q": "The following is true about hypoxia, except;", "opts": ["Haemorrhage", "Hypersensitivity reactions", "Ischeamia", "lead poisoning"], "correct": 1, "expl": "Haemorrhage, ischemia, and toxins like lead poisoning (which impair cellular oxygen use) are recognised causes/contributors to hypoxia. Hypersensitivity reactions are immune-mediated and not a classic direct cause of hypoxia."}, {"n": 49, "q": "Infectious agents of cell injury include the following except:", "opts": ["Indirect effects via free radicals", "Indirect effects via the host immune reaction.", "Inducing apoptosis", "Fungi"], "correct": 3, "expl": "Indirect injury via free radicals, host immune reactions, and apoptosis induction are MECHANISMS by which infectious agents injure cells. 'Fungi' is a category of infectious agent itself, not a mechanism, making it the odd one out in this list of mechanisms."}, {"n": 50, "q": "The following are true of benign tumors except", "opts": ["They are usually encapsulated", "They have effect on distant organs", "They cause pressure symptoms", "They can be obstructive"], "correct": 1, "expl": "Benign tumours remain localized and generally do not affect distant organs - having effects on distant organs is a feature of malignant, metastasizing tumours."}, {"n": 51, "q": "An adaptive feature in which there is increased number of cells is called...", "opts": ["Hypertrophy", "Dysplasia", "Hyperplasia", "Metaplasia"], "correct": 2, "expl": "Hyperplasia specifically refers to an increase in the number of cells in a tissue."}, {"n": 52, "q": "An adaptive feature in which there is decrease in size and function of cells is called ....", "opts": ["Atrophy", "Hypotrophy", "Hypertrophy", "Dysplasia"], "correct": 0, "expl": "Atrophy is the adaptive shrinkage in cell size and reduced function, often in response to decreased workload, blood supply, or nutrition."}, {"n": 53, "q": "Hypertrophy can be all except", "opts": ["Increase in the size of cells that result in the size of the affected organ.", "The hypertrophied organ has new cells", "The increase in size is due to the synthesis and assembly of additional intracellular structural components.", "Hypertrophy can be physiologic or pathologic"], "correct": 1, "expl": "Hypertrophy involves enlargement of EXISTING cells (via added structural components), not the addition of new cells - that distinction belongs to hyperplasia."}, {"n": 54, "q": "Characteristics of acute inflammation include the following except", "opts": ["Increased leakage of the vessel (vascular permeability)", "Exudation of fluids which contain lots of proteins and WBC", "Result in emigration of red blood cells", "stereotype response"], "correct": 2, "expl": "Acute inflammation primarily causes emigration of white blood cells (leukocytes) into tissue; red blood cell extravasation is not a defining/expected feature (except incidentally in severe vascular injury)."}, {"n": 55, "q": "Chronic inflammations shows", "opts": ["It follows immediately after an injury", "Insidious onset", "Occurs over a short period of time or prolong", "Incase of burns and infection, it is short"], "correct": 1, "expl": "Chronic inflammation typically has an insidious (gradual, low-grade) onset and a prolonged course, in contrast to the rapid onset and short duration of acute inflammation."}, {"n": 56, "q": "The following are intracellular components except", "opts": ["Lysosomes", "Chromatin", "Peroxisomes", "Ribosomes"], "correct": 1, "expl": "Lysosomes, peroxisomes, and ribosomes are cytoplasmic organelles. Chromatin is nuclear material (DNA/protein complex), located in the nucleus rather than being classified as a typical cytoplasmic organelle in this grouping."}, {"n": 57, "q": "Which is the basic functional unit of the body?", "opts": ["Cell", "Tissue", "Mitochondria", "Organ"], "correct": 0, "expl": "The cell is universally regarded as the basic structural and functional unit of the human body."}, {"n": 58, "q": "A man who had a frost bite due to temperatures fallen below -10 degrees, cell death is most likely due to", "opts": ["Chemical agent", "Biological agent", "Physical agent", "Physiological agent"], "correct": 2, "expl": "Extreme cold (temperature) is a physical agent of cell injury, alongside mechanical trauma, radiation, and electrical injury."}, {"n": 59, "q": "The process by which certain number of cells die in an organized (Programmed) pattern is also known as", "opts": ["Necrosis", "Atrophy", "Apoptosis", "Dysplasia"], "correct": 2, "expl": "Apoptosis is the term for programmed, orderly cell death, as opposed to the more chaotic, inflammation-inducing process of necrosis."}, {"n": 60, "q": "In response to injury, the following are adaptive processes except", "opts": ["Hypertrophy", "Hyperplasia", "Atrophy", "Metaplasia"], "correct": 3, "expl": "Hypertrophy, hyperplasia, and atrophy are classic reversible cellular adaptations to altered demand or injury. Metaplasia is a change from one differentiated cell type to another, typically in response to chronic irritation rather than a simple size/number adaptation, and is often grouped separately as a potentially pre-neoplastic change - making it the exception here."}, {"n": 61, "q": "Physiologic causes of apoptosis include the following except", "opts": ["Embryogenesis", "Obstruction of gland ducts", "Death of self-reactive T-cells", "Regression of hormone dependent tissue after hormonal withdrawal"], "correct": 1, "expl": "Embryogenesis, elimination of self-reactive T-cells, and hormone-withdrawal-related tissue regression are physiological apoptosis triggers. Duct obstruction is a PATHOLOGICAL trigger of apoptosis (via back-pressure atrophy), not a normal physiological one."}, {"n": 62, "q": "Which of the following refers to an increase in cell size?", "opts": ["Hyperplasia", "Atrophy", "Hypertrophy", "Dysplasia"], "correct": 2, "expl": "Hypertrophy specifically describes an increase in the SIZE of individual cells."}, {"n": 63, "q": "Which is not a feature of apoptosis?", "opts": ["Inflammation", "Apoptotic bodies", "Cell shrinkage", "Nuclear fragmentation"], "correct": 0, "expl": "Apoptosis is characteristically a 'clean' process (cell shrinkage, apoptotic bodies, nuclear fragmentation) that does NOT trigger inflammation, unlike necrosis, which spills cellular contents and provokes an inflammatory response."}, {"n": 64, "q": "Which of the following is not a feature of necrosis?", "opts": ["Surrounding inflammation", "Leakage of cellular contents", "Pyknosis", "Cell shrinkage"], "correct": 3, "expl": "Necrotic cells characteristically SWELL (rather than shrink) due to loss of membrane integrity and ionic homeostasis - cell shrinkage is instead a feature of apoptosis."}, {"n": 65, "q": "Which of the following is not a type of cellular adaptation?", "opts": ["Hypertrophy", "Hyperplasia", "Atrophy", "Dysplasia"], "correct": 3, "expl": "Hypertrophy, hyperplasia, and atrophy are classic reversible cellular adaptations. Dysplasia represents disordered, potentially pre-malignant growth rather than a normal adaptive response."}, {"n": 66, "q": "Systemic factors which may affect wound healing are the following except", "opts": ["Age", "Nutrition", "Systemic infection", "Movement"], "correct": 3, "expl": "Age, nutrition, and systemic infection are systemic factors influencing wound healing. Movement (at the wound site) is a LOCAL mechanical factor, not a systemic one."}, {"n": 67, "q": "Which of the following is most important in wound healing delay?", "opts": ["Blood supply", "Movement", "Infection", "Ionizing radiation"], "correct": 2, "expl": "Infection is one of the most significant and common factors that delays or impairs wound healing."}, {"n": 68, "q": "The following are complications of wound healing except", "opts": ["Scar formation", "Hypertrophic scar", "Malignant transformation", "Excessive contraction"], "correct": 0, "expl": "A normal scar is an expected OUTCOME of healing, not a complication. Hypertrophic scarring, malignant transformation (rare, e.g. Marjolin's ulcer), and excessive contracture formation are recognised complications."}, {"n": 69, "q": "In regeneration, which is true?", "opts": ["Regeneration depends on the ability of the injured cells to divide", "The injured tissue is completely restored", "The cell cycle does not play a role", "Regeneration results in scar tissue formation"], "correct": 0, "expl": "True regeneration (replacement by cells of the same type) is only possible if the surviving/injured cells retain the capacity to proliferate; tissues made of permanent (non-dividing) cells instead heal by scar (fibrous repair)."}, {"n": 70, "q": "Repair can occur through the following ways except", "opts": ["Proliferation of residual cells", "Maturation of stem cells", "Connective tissue deposition", "Proliferation of injured cells"], "correct": 3, "expl": "Repair occurs via proliferation of surviving residual (uninjured) cells, stem cell maturation, and connective tissue (fibrous) deposition. The already-injured cells themselves are typically dead or non-functional and do not proliferate to mediate repair."}]</script>
+<script>
+(function(){
+  var DATA = JSON.parse(document.getElementById('quiz-data').textContent);
+  var TOTAL_SECONDS = 60 * 60;
+  var LETTERS = ['A','B','C','D'];
+
+  var state = {
+    answers: new Array(DATA.length).fill(null),
+    remaining: TOTAL_SECONDS,
+    timerHandle: null,
+    started: false,
+    finished: false
+  };
+
+  var startScreen = document.getElementById('startScreen');
+  var quizScreen = document.getElementById('quizScreen');
+  var resultsScreen = document.getElementById('resultsScreen');
+  var startBtn = document.getElementById('startBtn');
+  var timerEl = document.getElementById('timer');
+  var progressText = document.getElementById('progressText');
+  var barFill = document.getElementById('barFill');
+  var paletteEl = document.getElementById('palette');
+  var qlistEl = document.getElementById('qlist');
+  var submitBtn = document.getElementById('submitBtn');
+  var finalCount = document.getElementById('finalCount');
+
+  function fmtTime(s){
+    var m = Math.floor(s/60);
+    var sec = s % 60;
+    return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+  }
+
+  function buildPalette(){
+    paletteEl.innerHTML = '';
+    DATA.forEach(function(q, i){
+      var cell = document.createElement('div');
+      cell.className = 'pcell';
+      cell.textContent = (i+1);
+      cell.addEventListener('click', function(){
+        var block = document.getElementById('q-' + i);
+        if(block){ block.scrollIntoView({behavior:'smooth', block:'start'}); }
+      });
+      paletteEl.appendChild(cell);
+    });
+  }
+
+  function refreshPalette(){
+    var cells = paletteEl.children;
+    for(var i=0;i<cells.length;i++){
+      cells[i].classList.toggle('answered', state.answers[i] !== null);
+    }
+  }
+
+  function buildQuestionList(){
+    qlistEl.innerHTML = '';
+    DATA.forEach(function(q, i){
+      var block = document.createElement('div');
+      block.className = 'qblock';
+      block.id = 'q-' + i;
+
+      var numEl = document.createElement('div');
+      numEl.className = 'qnum';
+      numEl.textContent = 'Question ' + (i+1) + ' of ' + DATA.length;
+
+      var textEl = document.createElement('p');
+      textEl.className = 'qtext';
+      textEl.textContent = q.q;
+
+      var optsWrap = document.createElement('div');
+
+      q.opts.forEach(function(opt, oi){
+        var label = document.createElement('label');
+        label.className = 'opt';
+        label.innerHTML =
+          '<input type="radio" name="q' + i + '">' +
+          '<span class="letter">' + LETTERS[oi] + '.</span>' +
+          '<span>' + opt + '</span>';
+        label.addEventListener('click', function(){
+          selectAnswer(i, oi, block);
+        });
+        optsWrap.appendChild(label);
+      });
+
+      block.appendChild(numEl);
+      block.appendChild(textEl);
+      block.appendChild(optsWrap);
+      qlistEl.appendChild(block);
+    });
+  }
+
+  function selectAnswer(qIndex, optIndex, block){
+    state.answers[qIndex] = optIndex;
+    var opts = block.querySelectorAll('.opt');
+    opts.forEach(function(o, oi){
+      o.classList.toggle('selected', oi === optIndex);
+      var input = o.querySelector('input');
+      input.checked = (oi === optIndex);
+    });
+    block.classList.add('answered');
+    refreshPalette();
+    updateProgress();
+
+    // auto-advance: scroll smoothly to the next question, if any
+    var next = document.getElementById('q-' + (qIndex + 1));
+    if(next){
+      setTimeout(function(){
+        next.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 220);
+    } else {
+      setTimeout(function(){
+        document.getElementById('submitPanel').scrollIntoView({behavior:'smooth', block:'start'});
+      }, 220);
+    }
+  }
+
+  function updateProgress(){
+    var answered = state.answers.filter(function(a){return a!==null;}).length;
+    progressText.textContent = answered + ' of ' + DATA.length + ' answered';
+    barFill.style.width = ((answered / DATA.length) * 100) + '%';
+    finalCount.textContent = answered === DATA.length
+      ? 'All 100 questions answered. Ready to submit.'
+      : (DATA.length - answered) + ' question(s) still unanswered.';
+  }
+
+  function tick(){
+    state.remaining--;
+    timerEl.textContent = fmtTime(Math.max(state.remaining,0));
+    timerEl.classList.toggle('low', state.remaining <= 300);
+    if(state.remaining <= 0){
+      finishExam(true);
+    }
+  }
+
+  function startExam(){
+    state.started = true;
+    startScreen.style.display = 'none';
+    quizScreen.style.display = 'block';
+    buildPalette();
+    buildQuestionList();
+    updateProgress();
+    timerEl.textContent = fmtTime(state.remaining);
+    state.timerHandle = setInterval(tick, 1000);
+  }
+
+  function finishExam(auto){
+    if(state.finished) return;
+    if(!auto){
+      var unanswered = state.answers.filter(function(a){return a===null;}).length;
+      if(unanswered > 0){
+        var ok = confirm('You have ' + unanswered + ' unanswered question(s). Submit anyway?');
+        if(!ok){ return; }
+      }
+    }
+    state.finished = true;
+    clearInterval(state.timerHandle);
+    quizScreen.style.display = 'none';
+    showResults(auto);
+  }
+
+  function showResults(timedOut){
+    resultsScreen.style.display = 'block';
+    var correctCount = 0, incorrectCount = 0, skippedCount = 0;
+    var reviewList = document.getElementById('reviewList');
+    reviewList.innerHTML = '';
+
+    DATA.forEach(function(q, i){
+      var given = state.answers[i];
+      var status;
+      if(given === null){ status = 'skipped'; skippedCount++; }
+      else if(given === q.correct){ status = 'correct'; correctCount++; }
+      else { status = 'incorrect'; incorrectCount++; }
+
+      var item = document.createElement('div');
+      item.className = 'reviewItem ' + status;
+      item.dataset.status = status;
+
+      var tagHtml = '<span class="tag ' + status + '">' + status + '</span>';
+      var yourLine = given === null
+        ? '<div class="rline">You did not answer this question.</div>'
+        : '<div class="rline your">Your answer: ' + LETTERS[given] + '. ' + q.opts[given] + '</div>';
+      var correctLine = (status === 'incorrect' || status === 'skipped')
+        ? '<div class="rline correctline">Correct answer: ' + LETTERS[q.correct] + '. ' + q.opts[q.correct] + '</div>'
+        : '<div class="rline correctline">Correct — ' + LETTERS[q.correct] + '. ' + q.opts[q.correct] + '</div>';
+
+      item.innerHTML =
+        '<p class="rq">' + tagHtml + (i+1) + '. ' + q.q + '</p>' +
+        yourLine + correctLine +
+        '<div class="rexpl"><strong>Why:</strong> ' + q.expl + '</div>';
+      reviewList.appendChild(item);
+    });
+
+    var pct = Math.round((correctCount / DATA.length) * 100);
+    document.getElementById('scoreCircle').textContent = pct + '%';
+    document.getElementById('scoreHeadline').textContent = correctCount + ' / ' + DATA.length + ' correct';
+    document.getElementById('scoreSub').textContent =
+      (timedOut ? 'Time expired — exam auto-submitted. ' : 'Submitted manually. ') +
+      correctCount + ' correct, ' + incorrectCount + ' incorrect, ' + skippedCount + ' unanswered.';
+
+    var filterBtns = document.querySelectorAll('.filterBtn');
+    filterBtns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        filterBtns.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var f = btn.dataset.filter;
+        document.querySelectorAll('.reviewItem').forEach(function(el){
+          el.style.display = (f === 'all' || el.dataset.status === f) ? '' : 'none';
+        });
+      });
+    });
+
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  startBtn.addEventListener('click', startExam);
+  submitBtn.addEventListener('click', function(){ finishExam(false); });
+
+  window.addEventListener('beforeunload', function(e){
+    if(state.started && !state.finished){
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+})();
+
+</script>
+</body>
+</html>

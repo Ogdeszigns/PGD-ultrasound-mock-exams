@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Abdominal Sonography I — Module I Mock Exam</title>
+<style>
+  :root{
+    --ink:#0F2438;
+    --ink-soft:#3C5065;
+    --paper:#EEF2F1;
+    --panel:#FFFFFF;
+    --line:#CBD6D6;
+    --accent:#B4392F;      /* report-stamp red */
+    --accent-soft:#F1DAD7;
+    --signal:#1E7D6B;      /* echo-signal teal */
+    --signal-soft:#DCEFEA;
+    --amber:#B8862B;
+    --amber-soft:#F5E9D2;
+    --mono: ui-monospace, "SF Mono", "Roboto Mono", Menlo, Consolas, monospace;
+    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--sans);}
+  body{min-height:100vh;}
+  .wrap{max-width:880px;margin:0 auto;padding:24px 18px 80px;}
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    background:var(--ink);
+    color:#EAF0EF;
+    border-radius:10px;
+    padding:22px 24px;
+    position:relative;
+    overflow:hidden;
+    margin-bottom:18px;
+  }
+  .masthead .sweep{
+    position:absolute; top:0; left:-30%; width:60%; height:100%;
+    background:linear-gradient(100deg, transparent, rgba(30,125,107,0.28), transparent);
+    animation:sweep 5.5s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes sweep{
+    0%{ left:-40%; }
+    50%{ left:110%; }
+    100%{ left:110%; }
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:#9FC7BE; margin:0 0 6px;
+  }
+  .masthead h1{
+    font-family:var(--serif); font-weight:700; font-size:26px; margin:0 0 4px; line-height:1.2;
+  }
+  .masthead p.sub{ margin:0; color:#B9C6D0; font-size:13.5px;}
+  .hr-thread{ height:1px; background:linear-gradient(90deg, #2B4356, transparent); margin:16px 0 0;}
+
+  /* ---------- cards ---------- */
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px 22px;
+  }
+  .field-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px 22px; margin:18px 0 22px;
+  }
+  .field-grid .field{border-bottom:1px dashed var(--line); padding-bottom:8px;}
+  .field label{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:4px;}
+  .field .val{font-size:14.5px; font-weight:600;}
+  input[type=text]{
+    width:100%; border:none; border-bottom:1px solid var(--line); background:transparent;
+    font-size:14.5px; font-weight:600; font-family:var(--sans); color:var(--ink); padding:2px 0 6px;
+  }
+  input[type=text]:focus{outline:none; border-bottom-color:var(--signal);}
+
+  button{
+    font-family:var(--sans); font-weight:700; font-size:14.5px; letter-spacing:.01em;
+    border:none; border-radius:7px; padding:12px 20px; cursor:pointer;
+  }
+  .btn-primary{ background:var(--signal); color:#fff; }
+  .btn-primary:hover{ background:#166457; }
+  .btn-primary:disabled{ background:#9CB8B2; cursor:not-allowed; }
+  .btn-ghost{ background:transparent; color:var(--ink-soft); border:1px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--ink-soft); color:var(--ink);}
+  .btn-danger{ background:var(--accent); color:#fff; }
+  .btn-danger:hover{ background:#912a22; }
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .row.between{justify-content:space-between;}
+
+  .note{font-size:12.5px; color:var(--ink-soft); line-height:1.5;}
+  .note.warn{ background:var(--amber-soft); border:1px solid #E4CE9E; color:#6B4E12; padding:10px 12px; border-radius:7px;}
+
+  /* ---------- exam bar (sticky during quiz) ---------- */
+  #examBar{
+    position:sticky; top:0; z-index:5;
+    background:var(--ink); color:#EAF0EF;
+    border-radius:10px; padding:12px 16px; margin-bottom:16px;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    box-shadow:0 6px 18px rgba(15,36,56,0.18);
+  }
+  #timer{
+    font-family:var(--mono); font-size:20px; letter-spacing:.03em; font-weight:600;
+    padding:4px 10px; border-radius:6px; background:rgba(255,255,255,0.08);
+  }
+  #timer.low{ background:rgba(180,57,47,0.35); color:#FFD9D5; }
+  #progressText{font-family:var(--mono); font-size:12px; color:#B9C6D0;}
+  .barTrack{ height:5px; border-radius:3px; background:rgba(255,255,255,0.12); overflow:hidden; margin-top:8px;}
+  .barFill{ height:100%; background:var(--signal); width:0%; transition:width .25s;}
+
+  /* ---------- question palette ---------- */
+  #palette{
+    display:grid; grid-template-columns:repeat(10, 1fr); gap:6px; margin:14px 0 18px;
+  }
+  .pcell{
+    font-family:var(--mono); font-size:11px; text-align:center; padding:6px 0;
+    border-radius:5px; border:1px solid var(--line); background:var(--panel); cursor:pointer; color:var(--ink-soft);
+  }
+  .pcell.answered{ background:var(--signal-soft); border-color:var(--signal); color:var(--signal);}
+  .pcell.current{ outline:2px solid var(--ink); outline-offset:1px;}
+
+  /* ---------- question list ---------- */
+  #qlist{ display:flex; flex-direction:column; gap:14px; margin-bottom:16px; }
+  .qblock{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:18px 20px; scroll-margin-top:96px;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .qblock.answered{ border-color:var(--signal); }
+  .qblock.focused{ box-shadow:0 0 0 3px var(--signal-soft); }
+  .qblock .qnum{font-family:var(--mono); font-size:11px; color:var(--signal); letter-spacing:.1em; text-transform:uppercase; margin-bottom:6px;}
+  .qblock .qtext{font-family:var(--serif); font-size:17.5px; line-height:1.4; margin:0 0 14px;}
+  #submitPanel{ padding:24px 22px; }
+
+  .opt{
+    display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border:1px solid var(--line);
+    border-radius:8px; margin-bottom:9px; cursor:pointer; transition:border-color .15s, background .15s;
+  }
+  .opt:hover{ border-color:var(--signal); }
+  .opt input{ margin-top:3px; accent-color:var(--signal); }
+  .opt .letter{font-family:var(--mono); font-weight:700; color:var(--ink-soft); width:16px;}
+  .opt.selected{ border-color:var(--signal); background:var(--signal-soft); }
+  .opt.selected .letter{ color:var(--signal); }
+
+  /* ---------- results ---------- */
+  .scoreCard{ display:flex; align-items:center; gap:22px; margin-bottom:8px;}
+  .scoreCircle{
+    width:88px; height:88px; border-radius:50%; border:6px solid var(--signal);
+    display:flex; align-items:center; justify-content:center; font-family:var(--mono);
+    font-size:20px; font-weight:700; flex:none;
+  }
+  .reviewItem{ border:1px solid var(--line); border-radius:9px; padding:14px 16px; margin-bottom:10px;}
+  .reviewItem.correct{ border-left:5px solid var(--signal);}
+  .reviewItem.incorrect{ border-left:5px solid var(--accent);}
+  .reviewItem.skipped{ border-left:5px solid var(--amber);}
+  .rq{ font-family:var(--serif); font-size:15.5px; margin:0 0 8px; }
+  .rline{ font-size:13.5px; margin:3px 0; }
+  .rline.your{ color:var(--accent); }
+  .rline.correctline{ color:var(--signal); }
+  .rexpl{ font-size:13px; color:var(--ink-soft); margin-top:6px; line-height:1.5; border-top:1px dashed var(--line); padding-top:6px;}
+  .tag{font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.06em; padding:2px 7px; border-radius:4px; margin-right:6px;}
+  .tag.correct{background:var(--signal-soft); color:var(--signal);}
+  .tag.incorrect{background:var(--accent-soft); color:var(--accent);}
+  .tag.skipped{background:var(--amber-soft); color:var(--amber);}
+
+  .filterRow{display:flex; gap:8px; margin:14px 0; flex-wrap:wrap;}
+  .filterBtn{font-family:var(--mono); font-size:11.5px; padding:7px 12px; border-radius:6px; border:1px solid var(--line); background:var(--panel); color:var(--ink-soft); cursor:pointer;}
+  .filterBtn.active{ background:var(--ink); color:#fff; border-color:var(--ink);}
+
+  footer{ text-align:center; color:var(--ink-soft); font-size:11.5px; margin-top:30px; }
+
+  @media (max-width:560px){
+    .field-grid{grid-template-columns:1fr;}
+    #palette{grid-template-columns:repeat(6,1fr);}
+    .masthead h1{font-size:21px;}
+    #qtext{font-size:17px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="sweep"></div>
+    <p class="eyebrow">Nigerian Institute of Radiographers &middot; PGD Medical Ultrasound</p>
+    <h1>Abdominal Sonography I — Module&nbsp;I Mock Examination</h1>
+    <p class="sub">81 objective questions &middot; single best answer &middot; self-marking, offline-capable exam simulator</p>
+    <div class="hr-thread"></div>
+  </div>
+
+  <!-- ===================== START SCREEN ===================== -->
+  <div id="startScreen" class="panel">
+    <div class="field-grid">
+      <div class="field">
+        <label>Candidate name (optional)</label>
+        <input type="text" id="candidateName" placeholder="Enter your name">
+      </div>
+      <div class="field">
+        <label>Duration</label>
+        <div class="val">1 hr 30 min (90:00)</div>
+      </div>
+      <div class="field">
+        <label>Questions</label>
+        <div class="val">81, single best answer</div>
+      </div>
+      <div class="field">
+        <label>Marking</label>
+        <div class="val">Auto-scored with explanations at the end</div>
+      </div>
+    </div>
+    <p class="note">Once you start, the clock runs continuously for 90 minutes. You can move freely between questions using the palette grid, and the quiz auto-submits when time runs out. Your answers, score and explanations only appear after you submit or time expires — there's no going back to change an answer after that point.</p>
+    <p class="note warn">Answer key note: this exam has no publisher-supplied answer key. Correct answers and explanations were derived from standard abdominal-ultrasound references by the assistant that built this quiz — a few items were worded ambiguously in the source paper and needed a best-judgement call, so please cross-check anything you're unsure of against your course material.</p>
+    <div class="row" style="margin-top:16px;">
+      <button class="btn-primary" id="startBtn">Start exam — begin 90:00 clock</button>
+    </div>
+  </div>
+
+  <!-- ===================== QUIZ SCREEN ===================== -->
+  <div id="quizScreen" style="display:none;">
+    <div id="examBar">
+      <div>
+        <div id="progressText">Question 1 of 100</div>
+        <div class="barTrack"><div class="barFill" id="barFill"></div></div>
+      </div>
+      <div id="timer">90:00</div>
+    </div>
+
+    <div class="panel" style="padding:20px 22px 8px;">
+      <div id="palette"></div>
+      <p class="note" style="margin:2px 0 16px;">Answer each question and the list scrolls to the next one for you. You can also scroll or tap a number above to jump anywhere — nothing is locked once answered.</p>
+    </div>
+
+    <div id="qlist"></div>
+
+    <div class="panel" id="submitPanel" style="text-align:center;">
+      <p class="note" id="finalCount" style="margin-bottom:12px;"></p>
+      <button class="btn-danger" id="submitBtn">Submit exam</button>
+    </div>
+  </div>
+
+  <!-- ===================== RESULTS SCREEN ===================== -->
+  <div id="resultsScreen" style="display:none;">
+    <div class="panel">
+      <p class="eyebrow" style="color:var(--signal);">Result</p>
+      <div class="scoreCard">
+        <div class="scoreCircle" id="scoreCircle">--%</div>
+        <div>
+          <div style="font-family:var(--serif); font-size:20px; font-weight:700;" id="scoreHeadline">Score</div>
+          <div class="note" id="scoreSub"></div>
+        </div>
+      </div>
+      <div class="filterRow">
+        <button class="filterBtn active" data-filter="all">All (100)</button>
+        <button class="filterBtn" data-filter="incorrect">Incorrect</button>
+        <button class="filterBtn" data-filter="skipped">Unanswered</button>
+        <button class="filterBtn" data-filter="correct">Correct</button>
+      </div>
+    </div>
+    <div id="reviewList" style="margin-top:14px;"></div>
+  </div>
+
+  <footer>Generated exam simulator &middot; runs entirely in your browser, no server or internet connection required once this page is loaded.</footer>
+</div>
+
+<script id="quiz-data" type="application/json">[{"n": 1, "q": "This is true about pancreatic sonography", "opts": ["It is easily visualized as it uses the stomach and liver as acoustic windows", "The tail is often demonstrated by angling the probe towards the liver", "Scanning the patient while standing can demonstrate the organ fully", "Filling the stomach with much water is not necessary as the spleen can help in visualizing the pancreas"], "correct": 0, "expl": "The liver and a fluid-filled stomach are the standard acoustic windows used to visualize the pancreas, which otherwise sits deep and is easily obscured by bowel gas."}, {"n": 2, "q": "These are congenital anomalies of the pancreas", "opts": ["Pancreatic divisum and pancreatic secundum", "Pancreatic divisum and pancreatic volvulus", "Pancreatic divisum and pancreatic annulare", "Pancreatic divisum and pancreatic annularis"], "correct": 2, "expl": "The two classic congenital pancreatic anomalies are pancreas divisum (failure of the dorsal and ventral ducts to fuse) and annular pancreas (pancreas anulare), which encircles the duodenum."}, {"n": 3, "q": "This is true about clinical presentation of acute pancreatitis except", "opts": ["Epigastric pain", "Abdominal distension", "Nausea and vomiting", "Severe fever"], "correct": 3, "expl": "Epigastric pain, distension, and nausea/vomiting are hallmark features of acute pancreatitis; a low-grade fever may occur, but severe/high fever is not a typical defining feature and instead raises concern for infection/abscess."}, {"n": 4, "q": "Pancreatic metastasis is usually from all these except", "opts": ["Breast", "Brain", "GIT", "Lung"], "correct": 1, "expl": "Breast, GI tract, and lung cancers are recognised sources of metastasis to the pancreas. The brain is not a typical source - if anything, spread more often runs the other way (systemic cancers metastasizing TO the brain)."}, {"n": 5, "q": "Benign cyst of the pancreas is usually associated with", "opts": ["Polycystic disease", "Amoebic liver abscess", "Choledochal cyst"], "correct": 0, "expl": "Simple pancreatic cysts are classically associated with autosomal dominant polycystic kidney disease, which can also produce cysts in the pancreas and liver."}, {"n": 6, "q": "The followings are true about splenic cyst except", "opts": ["Most splenic cyst are hydatid cysts", "Simple splenic cyst can be anaechoic with thin and well defined border", "Appearance of hydatid can appear as simple cyst", "Hydatid cyst of the spleen is identified by the presence of daughter cysts."], "correct": 0, "expl": "Most splenic cysts encountered are simple/post-traumatic (pseudo)cysts rather than hydatid cysts; hydatid disease is an important but less common cause, seen especially in endemic areas."}, {"n": 7, "q": "Uncommon splenic cystic lesions include the following except", "opts": ["Pancreatic pseudocyst", "Lymphangiomas", "Hemangiomas", "Primary congenital cyst"], "correct": 2, "expl": "Splenic hemangiomas are the most common benign splenic tumor and are typically solid (or complex), not primarily cystic, unlike pseudocysts, lymphangiomas, and primary congenital cysts."}, {"n": 8, "q": "These are true about splenomegaly except", "opts": ["Assessment of splenomegaly is usually inaccurate due to its non-reproducibility", "Spleen enlarged downwards and laterally", "Splenomegaly due to portal hypertension is usually associated with cirrhotic liver", "Length of normal adult spleen is usually < 12cm."], "correct": 0, "expl": "Sonographic measurement of splenic length is a reasonably reproducible technique (unlike palpation on physical exam), so describing it as inherently inaccurate/non-reproducible is not correct."}, {"n": 9, "q": "Causes of splenomegaly include all but one", "opts": ["Malaria", "Portal hypertension", "Phaeochromocytoma", "Leukemia"], "correct": 2, "expl": "Malaria, portal hypertension, and leukemia are well-recognised causes of splenomegaly. Phaeochromocytoma is an adrenal tumor and is not a recognised cause of splenic enlargement."}, {"n": 10, "q": "Splenic functions include the following except", "opts": ["Phagocytosis", "Fetal hematopoiesis", "Adult hematopoiesis", "Immune response"], "correct": 2, "expl": "The spleen is a site of hematopoiesis in fetal life, but in the healthy adult this role is taken over by the bone marrow; phagocytosis and immune surveillance remain lifelong splenic functions."}, {"n": 11, "q": "A cirrhotic liver is hyper-echoic which means", "opts": ["There are no reflectors", "There are high-impedance interfaces", "There are few echoes", "There are many reflectors"], "correct": 3, "expl": "A hyperechoic (bright) appearance on ultrasound results from a greater number of interfaces reflecting sound back to the transducer, i.e. many reflectors, as seen with fibrofatty change in cirrhosis."}, {"n": 12, "q": "A patient presents with a dilated common bile duct and an ill defined pancreatic head mass with poor through transmission. Which of the following is the most likely diagnosis?", "opts": ["Gall stone pancreatitis", "Pancreatic pseudocyst", "Common bile duct calcification", "Pancreatic cancer"], "correct": 3, "expl": "A poorly-defined, poorly-transmitting (solid, attenuating) pancreatic head mass obstructing the CBD is the classic sonographic picture of pancreatic head adenocarcinoma."}, {"n": 13, "q": "When scanning transversely over the pancreas, which of the following is a tortuous vessel that will be seen coursing superior to the body and tail of the pancreas", "opts": ["Splenic artery", "Pancreatic artery", "Splenic vein", "Superior mesenteric vein"], "correct": 0, "expl": "The splenic artery classically has a tortuous course along the superior margin of the pancreatic body and tail, in contrast to the straighter splenic vein running along the posterior/inferior margin."}, {"n": 14, "q": "When measuring gall bladder wall thickness in suspected acute cholecystitis, the wall will be measured", "opts": ["On the posterior surface", "On the anterior surface", "In the lateral surface", "On any surface"], "correct": 1, "expl": "The anterior gallbladder wall is measured because the posterior wall is affected by reverberation and enhancement artifacts from the fluid-filled lumen, making it unreliable for accurate measurement."}, {"n": 15, "q": "Which of the following organs is not retroperitoneal", "opts": ["Aorta", "Kidneys", "Inferior vena cava", "Spleen"], "correct": 3, "expl": "The aorta, IVC, and kidneys are retroperitoneal structures. The spleen is an intraperitoneal organ, fully covered by peritoneum."}, {"n": 16, "q": "The following may be mistaken for splenic lesions except", "opts": ["A kidney lesion", "Adrenal tumours", "The head of the pancreas", "The stomach"], "correct": 2, "expl": "Structures adjacent to the spleen - the kidney, adrenal gland, stomach, and pancreatic tail - can mimic splenic lesions on imaging. The pancreatic head lies far to the right, well away from the spleen, so it is not typically confused with a splenic lesion."}, {"n": 17, "q": "A highly vascular, benign tumor in the liver is referred to as", "opts": ["Hepatoma", "Lymphoma", "Hemangioma", "Hepatic adenoma"], "correct": 2, "expl": "A cavernous hemangioma is the most common benign, highly vascular liver tumor."}, {"n": 18, "q": "The indications for ultrasonography of the gallbladder and bile ducts include the following except:", "opts": ["Pain in the right upper abdomen", "Jaundice", "Palpable left upper abdominal mass", "Fever of unknown origin."], "correct": 2, "expl": "A palpable mass in the LEFT upper abdomen points toward the spleen or left kidney, not the gallbladder/biliary system, so it is not an indication for a gallbladder/bile duct study."}, {"n": 19, "q": "The Bile is a;", "opts": ["Greenish-yellow fluid", "Pinkish-blue fluid", "Bluish-yellow fluid", "Dark reddish fluid"], "correct": 0, "expl": "Bile is classically described as a greenish-yellow fluid, its colour coming from bile pigments such as bilirubin."}, {"n": 20, "q": "The gallbladder is divided into the following except", "opts": ["Neck", "Isthmus", "Body", "Fundus"], "correct": 1, "expl": "The gallbladder's recognised anatomical parts are the fundus, body, and neck (with the neck leading into the cystic duct). 'Isthmus' is not a standard part of gallbladder anatomy."}, {"n": 21, "q": "Having a patient drink water during a pancreatic sonogram may be useful in all the following except", "opts": ["Using the fluid filled duodenum to image the pancreatic head", "Distinguishing the stomach from a pancreatic pseudocyst.", "Increasing the gas in the abdomen, thereby pushing the pancreas into a better position for scanning.", "Imaging of the pancreatic tail through the fundus of the stomach"], "correct": 2, "expl": "Drinking water is used precisely to displace troublesome bowel gas and create a fluid acoustic window - it does not increase gas in the abdomen."}, {"n": 22, "q": "An echo free gall bladder that is 12cm in length is a case of:", "opts": ["Biloma", "Hydrops of gall bladder", "Papilloma", "Acalculous cholecystitis"], "correct": 1, "expl": "A markedly enlarged (here 12 cm), echo-free, distended gallbladder describes hydrops of the gallbladder."}, {"n": 23, "q": "Which of the following is a true cyst?", "opts": ["Renal parenchymal cyst", "Parapelvic cyst", "Biloma", "Pancreatic pseudocyst"], "correct": 0, "expl": "A simple renal parenchymal (cortical) cyst is a classic true (epithelial-lined) cyst, unlike a biloma or pancreatic pseudocyst, which are fluid collections without a true epithelial lining."}, {"n": 24, "q": "A patient presents with severe abdominal pain, nausea, vomiting, abdominal distension, increased lipase levels, and decreased haematocrit. What should the Sonographer suspect?", "opts": ["Hepatitis", "Haemorrhagic pancreatitis", "Duodenitis", "Cholelithiasis"], "correct": 1, "expl": "Severe pain with markedly raised lipase and a falling hematocrit (from internal bleeding) points to hemorrhagic pancreatitis, a severe complication of acute pancreatitis."}, {"n": 25, "q": "The cells of the intestinal mucosa secrete a hormone that causes the gall bladder to contract and release bile. This hormone is:", "opts": ["Lecithin", "Cholesterol", "Cholecystokinin", "Bilirubin"], "correct": 2, "expl": "Cholecystokinin (CCK), released by duodenal mucosal cells in response to fatty food, stimulates gallbladder contraction and bile release."}, {"n": 26, "q": "The liver is an intraperitoneal organ surrounded by peritoneum, which portion, if any, is not covered by peritoneum.", "opts": ["Right lobe", "Bare area", "Caudate lobe", "Left lobe"], "correct": 1, "expl": "The 'bare area' of the liver, where it directly contacts the diaphragm, is the one region not covered by peritoneum."}, {"n": 27, "q": "Extra hepatic collections of extravasated bile from abdominal trauma, biliary surgery or gall bladder disease are known as", "opts": ["Hematomas", "Urinomas", "Choledochal cysts", "Bilomas"], "correct": 3, "expl": "A biloma is a localized extrahepatic collection of bile resulting from bile duct injury, trauma, or surgery."}, {"n": 28, "q": "An elderly man falls on a wooden chair and strikes his left side. He catches the fall with both hands but has to struggle to get back to a standing position. Although in pain he does not report his injury, one day later he falls again unable to sit up. Paramedics arrive to find the patient pale and clammy with a blood pressure of 60/40. At the hospital, a sonogram was ordered. The sonographer should be careful to check for.", "opts": ["Splenic rupture", "Prostate obstruction", "Gall bladder rupture", "Renal artery aneurysm"], "correct": 0, "expl": "Left-sided blunt trauma followed by delayed hypotension and shock is the classic presentation of a delayed splenic rupture, which the sonographer must specifically evaluate for."}, {"n": 29, "q": "The typical position for scanning the spleen is", "opts": ["Reverse trendelenburg", "Left lateral decubitus", "Prone", "Right lateral decubitus"], "correct": 3, "expl": "The spleen is best accessed through the left intercostal spaces with the patient rolled onto their right side (right lateral decubitus), which brings the spleen closer to the probe."}, {"n": 30, "q": "Congenital anomalies of the spleen include the following except", "opts": ["Accessory spleen.", "Splenic torsion", "Splenic agenesis", "Wandering spleen"], "correct": 1, "expl": "Accessory spleen, splenic agenesis, and wandering spleen are congenital variants. Splenic torsion is an acquired complication (often occurring in a wandering spleen), not itself a congenital anomaly."}, {"n": 31, "q": "Which of the following is the hormone released by the pancreas that encourages the body's use of glucose?", "opts": ["Insulin", "Glycogen", "Somatostatin", "Sodium bicarbonate"], "correct": 0, "expl": "Insulin, released by the pancreatic beta cells, promotes cellular uptake and use of glucose."}, {"n": 32, "q": "One clinical sign of an insulinoma is the presence of:", "opts": ["Low blood sugar symptoms.", "Hepatitis", "Elevated alpha-fetoprotein", "Zollinger-Ellison syndrome"], "correct": 0, "expl": "An insulinoma secretes excess insulin, producing episodic hypoglycemia and its associated symptoms."}, {"n": 33, "q": "The portion of the bowel that encompasses the head of the pancreas is the:", "opts": ["Duodenum", "Ileum", "Jejunum", "Caecum"], "correct": 0, "expl": "The C-loop of the duodenum wraps around and encompasses the pancreatic head."}, {"n": 34, "q": "What is the name for the main pancreatic duct?", "opts": ["Duct of Santorini.", "Duct of Oddi", "Duct of Langerhans", "Duct of Wirsung"], "correct": 3, "expl": "The main pancreatic duct is the duct of Wirsung, which usually joins the common bile duct at the ampulla of Vater."}, {"n": 35, "q": "The most common location of adenocarcinoma of the pancreas is within the:", "opts": ["Head of the pancreas", "Body of the pancreas", "Neck of the pancreas", "Tail of the pancreas"], "correct": 0, "expl": "The majority of pancreatic adenocarcinomas arise in the head of the pancreas, often presenting with obstructive jaundice."}, {"n": 36, "q": "What is another name for the accessory duct of the pancreas?", "opts": ["Duct of Santorini", "Duct of Oddi", "Duct of Langerhans", "Duct of Wirsung"], "correct": 0, "expl": "The accessory pancreatic duct is known as the duct of Santorini."}, {"n": 37, "q": "All of the following are part of the exocrine function of the pancreas except for the:", "opts": ["Production of lipase", "Production of amylase.", "Production of glucagon", "Production of sodium bicarbonate"], "correct": 2, "expl": "Lipase, amylase, and bicarbonate are exocrine secretions of the pancreas (via acinar and ductal cells). Glucagon is an endocrine hormone produced by the alpha cells of the islets of Langerhans."}, {"n": 38, "q": "Sonographically, when the liver is difficult to penetrate and diffusely echogenic, this is indicative of", "opts": ["Portal vein thrombosis", "Primary liver carcinoma", "Metastatic liver disease", "Fatty liver disease"], "correct": 3, "expl": "Diffusely increased echogenicity with poor beam penetration/posterior attenuation is the classic sonographic appearance of hepatic steatosis (fatty liver disease)."}, {"n": 39, "q": "The left umbilical vein after birth becomes the:", "opts": ["Falciform ligament", "Ligamentum teres", "Main lobar fissure", "Ligamentum venosum"], "correct": 1, "expl": "After birth, the umbilical vein closes and fibroses into the ligamentum teres (round ligament) of the liver."}, {"n": 40, "q": "The ligamentum teres can be used to separate the:", "opts": ["Medial and lateral segments of the left lobe", "Medial and posterior segments of the right lobe", "Anterior and medial segments of the left lobe", "Anterior and posterior segments of the right lobe"], "correct": 0, "expl": "The ligamentum teres runs within the fissure that divides the left hepatic lobe into its medial and lateral segments."}, {"n": 41, "q": "The diameter of the portal vein should not exceed:", "opts": ["4 mm", "8 mm", "10 mm", "13 mm"], "correct": 3, "expl": "The normal main portal vein diameter is generally accepted as up to about 13 mm; larger measurements raise concern for portal hypertension."}, {"n": 42, "q": "All of the following are located within the porta hepatis except:", "opts": ["Main portal vein", "Hepatic artery", "Common bile duct", "Middle hepatic vein"], "correct": 3, "expl": "The porta hepatis contains the classic 'portal triad' - portal vein, hepatic artery, and common bile duct. The hepatic veins (including the middle hepatic vein) drain superiorly into the IVC and are not part of the porta hepatis."}, {"n": 43, "q": "The main portal vein divides into:", "opts": ["Middle, left, and right branches", "Left and right branches", "Anterior and posterior branches", "Medial and lateral branches"], "correct": 1, "expl": "At the porta hepatis, the main portal vein bifurcates into left and right portal vein branches supplying the respective hepatic lobes."}, {"n": 44, "q": "The liver is divided into the following lobes except:", "opts": ["Right", "Dorsal", "Left", "Caudate"], "correct": 1, "expl": "The liver's recognised lobes are the right, left, caudate, and quadrate lobes. 'Dorsal lobe' is not a standard hepatic lobe."}, {"n": 45, "q": "The pancreas is an:", "opts": ["Intraperitoneal organ", "Extraperitoneal organ", "Retroperitoneal organ", "Endoperitoneal organ"], "correct": 2, "expl": "The pancreas lies largely retroperitoneally, behind the peritoneal cavity, which contributes to it being a difficult organ to visualize sonographically."}, {"n": 46, "q": "All of the following are sonographic appearance of chronic pancreatitis except", "opts": ["Bilateral hydronephrosis,", "Increased echogenicity,", "Calcifications", "Decreased size."], "correct": 0, "expl": "Chronic pancreatitis classically shows increased echogenicity, calcifications, ductal dilation, and an atrophic (decreased size) gland. Bilateral hydronephrosis is a renal/urinary finding, not a feature of chronic pancreatitis."}, {"n": 47, "q": "Which of the following does not describe splenomegaly?", "opts": ["Greater than 13cm in length", "Greater than 6cm in thickness", "Much longer than the left kidney", "Less visible vessels than the liver"], "correct": 3, "expl": "Splenic length >13 cm, increased thickness, and a spleen clearly longer than the adjacent kidney are recognised sonographic markers of splenomegaly. Vessel visibility relative to the liver is not a standard splenomegaly criterion."}, {"n": 48, "q": "Which of the following is not true of the spleen?", "opts": ["It develops during the 6th week of intrauterine life", "Is located in the left hypochondriac quadrant of the abdomen;", "The head of the pancreas protrudes towards the spleen.", "The normal spleen size on sonography in adults is about 10 to 12cm in length."], "correct": 2, "expl": "It is the TAIL of the pancreas, not the head, that lies close to and points toward the splenic hilum; the head lies on the opposite (right) side of the abdomen near the duodenum."}, {"n": 49, "q": "Locating the gastroduodenal artery helps identify what portion of the pancreas?", "opts": ["Pancreatic head,", "Body of pancreas,", "Tail of pancreas,", "The whole pancreas."], "correct": 0, "expl": "The gastroduodenal artery runs along the anterolateral margin of the pancreatic head, making it a useful landmark for identifying the head."}, {"n": 50, "q": "The most common complication associated with acute pancreatitis is a (n)", "opts": ["Abscess,", "Phlegmon,", "Insulinoma", "Pseudocyst"], "correct": 3, "expl": "A pancreatic pseudocyst, a fluid collection walled off by fibrous/granulation tissue, is the most common local complication following acute pancreatitis."}, {"n": 51, "q": "What is post prandial effect means?", "opts": ["Fasting,", "After eating,", "Peristaltic movement", "Empty bladder"], "correct": 1, "expl": "'Post-prandial' literally means after a meal - i.e., after eating."}, {"n": 52, "q": "Which vessel is located directly posterior to the pancreas and is surrounded by an echogenic ring on ultrasound?", "opts": ["Splenic artery,", "Splenic vein,", "Superior mesenteric artery", "Inferior vena cava"], "correct": 2, "expl": "The superior mesenteric artery is classically seen as a round structure surrounded by an echogenic ring of retroperitoneal fat, just posterior to the neck/body of the pancreas."}, {"n": 53, "q": "What name is given to the sensitivity test of the gallbladder where probe pressure is applied and causes a pain response?", "opts": ["Cholelithiasis,", "Cholecystitis,", "Murphy's sign", "Appendicitis"], "correct": 2, "expl": "A positive sonographic Murphy's sign - focal tenderness directly under the transducer over the gallbladder - is a key indicator of acute cholecystitis."}, {"n": 54, "q": "The adult liver is considered to be enlarged if the AP diameter exceeds what measurement?", "opts": ["15cm MCL,", "12cm MCL,", "14cm MCL,", "10cm MCL."], "correct": 0, "expl": "Hepatomegaly is generally considered present when the liver's anteroposterior (or craniocaudal) measurement in the midclavicular line exceeds about 15 cm."}, {"n": 55, "q": "All of the following will help to distinguish the aorta from the inferior vena cava except one:", "opts": ["The aorta lies more in the midline,", "The inferior vena cava is normally to the left of the aorta,", "The inferior vena cava is normally compressible while the aorta is not,", "The aorta has branches arising anteriorly."], "correct": 1, "expl": "The inferior vena cava normally lies to the RIGHT of the aorta, not the left - this statement reverses their true relationship."}, {"n": 56, "q": "All of the following are sources of diffuse gallbladder wall thickening except:", "opts": ["Benign ascites,", "Hepatitis,", "Congestive heart disease,", "Gallbladder polyp."], "correct": 3, "expl": "Ascites, hepatitis, and congestive heart failure cause generalized (diffuse) gallbladder wall thickening from edema. A gallbladder polyp is a focal intraluminal lesion, not a cause of diffuse wall thickening."}, {"n": 57, "q": "The most common variant of the gallbladder shape is:", "opts": ["Phrygian cap", "Harmann's pouch", "Septated gallbladder,", "Junctional fold."], "correct": 0, "expl": "A Phrygian cap, where the fundus is folded over, is the most common congenital variant of gallbladder shape."}, {"n": 58, "q": "Sonographically when the liver is difficult to penetrate and diffusely echogenic, this is indicative of:", "opts": ["Portal vein thrombosis,", "Liver metastases,", "Primary liver carcinoma,", "Fatty liver infiltration."], "correct": 3, "expl": "As above, this diffusely echogenic, poorly penetrated appearance is the classic picture of fatty liver infiltration (hepatic steatosis)."}, {"n": 59, "q": "Clinical findings of fatty infiltration of the liver includes:", "opts": ["Elevated liver function test", "Fever,", "Fatigue,", "Weight loss."], "correct": 0, "expl": "Fatty liver disease often presents with mildly elevated liver function tests, frequently as an incidental finding, rather than fever, fatigue or weight loss."}, {"n": 60, "q": "The left lobe of the liver can be separated from the right lobe by:", "opts": ["Right hepatic vein,", "Middle hepatic vein,", "Left hepatic vein", "Falciform ligament."], "correct": 1, "expl": "The main lobar (interlobar) fissure, containing the middle hepatic vein, is the true anatomical plane separating the right and left hepatic lobes."}, {"n": 61, "q": "A non-mobile, non-shadowing focus is seen within the gallbladder lumen. This most likely represents a:", "opts": ["Gallstone,", "Gallbladder carcinoma", "Gallbladder polyp", "Sludge ball."], "correct": 2, "expl": "A gallbladder polyp is classically fixed to the wall (non-mobile) and does not cast an acoustic shadow, distinguishing it from a mobile, shadowing gallstone."}, {"n": 62, "q": "The following are true of the Bile' except:", "opts": ["Breaks down fats,", "Produced in the gallbladder,", "Stored in the gallbladder,", "Secreted in the duodenum"], "correct": 1, "expl": "Bile is produced by the liver, not the gallbladder; the gallbladder only stores and concentrates it before release into the duodenum."}, {"n": 63, "q": "Which of the following is associated with sludge in the gallbladder?", "opts": ["Hypoechoic layer,", "Cast shadow,", "Movable dots,", "Stones."], "correct": 2, "expl": "Biliary sludge appears as low-level, dependent echoes ('movable dots') that layer with gravity and shift with patient position, without casting an acoustic shadow."}, {"n": 64, "q": "All of the following can cause bile duct obstruction except:", "opts": ["Ascaris,", "Cancer head of pancreas,", "Lesion in the porta hepatis,", "Hepatic adenoma."], "correct": 3, "expl": "Ascaris infestation, pancreatic head cancer, and porta hepatis lesions are recognised causes of biliary obstruction. A hepatic adenoma is a benign liver mass that does not typically obstruct the bile ducts."}, {"n": 65, "q": "What vessels supply the gallbladder with blood?", "opts": ["Hepatic artery,", "Cystic artery,", "Hepatic portal vein,", "Mesenteric artery."], "correct": 1, "expl": "The cystic artery, usually a branch of the right hepatic artery, is the primary blood supply to the gallbladder."}, {"n": 66, "q": "What two ducts unite to form the common bile duct before it enters the duodenum?", "opts": ["Pancreatic duct and hepatic duct,", "Cystic duct and common hepatic duct,", "Pancreatic duct and cystic duct,", "Bile duct and hepatic duct."], "correct": 1, "expl": "The cystic duct (from the gallbladder) joins the common hepatic duct (from the liver) to form the common bile duct."}, {"n": 67, "q": "The merging point of the pancreatic duct and common bile duct at the level of duodenum is referred to as the:", "opts": ["Sphincter of oddi,", "Ampulla of vater,", "Common bile duct,", "Cystic duct."], "correct": 1, "expl": "The ampulla of Vater is the dilated common channel where the pancreatic duct and common bile duct join before emptying into the duodenum."}, {"n": 68, "q": "What term describes a large fluid collection observed when scanning the abdomen of a patient with carcinomatous disease?", "opts": ["Hemoperitoneum,", "Ascites,", "Hepatoma,", "Paracolic fluid."], "correct": 1, "expl": "Malignant (carcinomatous) ascites describes free peritoneal fluid accumulation associated with cancer, seen as anechoic fluid throughout the abdomen and pelvis."}, {"n": 69, "q": "With a normally functioning gallbladder, what is stimulated by ingesting a fatty meal?", "opts": ["Relaxation,", "Contraction,", "Demonstration of the biliary radical,", "Gallstones."], "correct": 1, "expl": "A fatty meal triggers CCK release, which causes the gallbladder to contract and expel bile into the duodenum."}, {"n": 70, "q": "All of the following can be used to describe a true cyst in the liver except:", "opts": ["Anechoic,", "Smooth margins,", "Posterior enhancement,", "Low level echoes."], "correct": 3, "expl": "A true simple hepatic cyst is anechoic with smooth, well-defined margins and posterior acoustic enhancement. Low-level internal echoes suggest a complex cyst (hemorrhage, infection) rather than a true simple cyst."}, {"n": 71, "q": "Liver parenchyma is described in terms of:", "opts": ["Echo texture,", "Location,", "Focal zone,", "Size."], "correct": 0, "expl": "Liver parenchyma is primarily characterised sonographically by its echo texture (homogeneity and echogenicity relative to the renal cortex/spleen)."}, {"n": 72, "q": "The vessel normally seen lying posterior to the head of the pancreas is the:", "opts": ["Aorta,", "Pancreatic artery,", "Hepatic artery,", "Inferior vena cava."], "correct": 3, "expl": "The inferior vena cava courses directly posterior to the head of the pancreas as it ascends toward the right atrium."}, {"n": 73, "q": "What is the normal thickness of the gallbladder wall?", "opts": ["Less than 3mm,", "Less than 5cm,", "5mm,", "Less than 3cm"], "correct": 0, "expl": "A normal, non-distended gallbladder wall should measure less than 3 mm in thickness."}, {"n": 74, "q": "Sonographic signs of hepatic cirrhosis are all except:", "opts": ["Surface irregularity,", "Ascites,", "Increased echogenicity,", "All the above."], "correct": 3, "expl": "Surface (nodular) irregularity, ascites, and increased/coarsened echogenicity are all recognised sonographic signs of cirrhosis - so 'all the above' correctly captures that every listed finding is a genuine feature, making it the best-fit choice among these options even though the 'except' phrasing here is awkward."}, {"n": 75, "q": "A highly vascularized benign tumor in the liver is referred to as a:", "opts": ["Hepatoma,", "Haemangioma,", "Hepatic adenoma,", "Focal nodular hyperplasia."], "correct": 1, "expl": "As above, a cavernous hemangioma is the classic highly vascular, benign hepatic tumor."}, {"n": 76, "q": "The following are differential diagnosis of bright liver except:", "opts": ["Hyperlipidemia.", "Jaundice.", "Chronic hepatitis.", "Liver cirrhosis"], "correct": 1, "expl": "Hyperlipidemia, chronic hepatitis, and cirrhosis are recognised causes of a diffusely bright (echogenic) liver. Jaundice is a clinical sign/symptom, not itself a cause of increased liver echogenicity."}, {"n": 77, "q": "All of the following are diagnostic values of ultrasound in jaundice except", "opts": ["Hepatomegaly.", "Dilated bile ducts", "Cause of obstruction", "Location of a tumor."], "correct": 0, "expl": "Detecting dilated bile ducts, the cause of obstruction, and the location of an obstructing tumor are the key diagnostic contributions of ultrasound in jaundice work-up. Hepatomegaly is a nonspecific finding seen in many liver conditions, not a specific diagnostic value for jaundice."}, {"n": 78, "q": "Bile is produced in the liver and stored in the gallbladder. What regulates its entry into the duodenum?", "opts": ["Cystic duct", "Sphincter of oddi.", "Hepatic duct", "Duodenal Sphincter."], "correct": 1, "expl": "The sphincter of Oddi, at the ampulla of Vater, controls the flow of bile (and pancreatic secretions) into the duodenum."}, {"n": 79, "q": "Which of the following structures is anterior to the portal vein and the right hepatic artery?", "opts": ["Common bile duct", "Portal artery.", "Duodenum", "Head of pancreas."], "correct": 0, "expl": "In the classic 'Mickey Mouse' cross-section of the porta hepatis, the common bile duct lies anterior-right, the hepatic artery anterior-left, and the portal vein posteriorly."}, {"n": 80, "q": "The level of echogenicity of a malignant intrahepatic tumor depends on", "opts": ["The type of localized tumor", "The density of the tumor", "The effect of the tumor on the liver internal architecture", "All of the above."], "correct": 3, "expl": "The sonographic echogenicity of a liver tumor is influenced by its histologic type, internal density/composition, and how it disrupts the surrounding hepatic architecture - so all of these factors play a role."}, {"n": 81, "q": "The following are differential diagnosis of bright liver except: (repeat)", "opts": ["Hyperlipidemia.", "Jaundice.", "Chronic hepatitis.", "Liver cirrhosis"], "correct": 1, "expl": "Same as above - jaundice is a clinical sign, not itself a cause of increased liver echogenicity."}]</script>
+<script>
+(function(){
+  var DATA = JSON.parse(document.getElementById('quiz-data').textContent);
+  var TOTAL_SECONDS = 90 * 60;
+  var LETTERS = ['A','B','C','D'];
+
+  var state = {
+    answers: new Array(DATA.length).fill(null),
+    remaining: TOTAL_SECONDS,
+    timerHandle: null,
+    started: false,
+    finished: false
+  };
+
+  var startScreen = document.getElementById('startScreen');
+  var quizScreen = document.getElementById('quizScreen');
+  var resultsScreen = document.getElementById('resultsScreen');
+  var startBtn = document.getElementById('startBtn');
+  var timerEl = document.getElementById('timer');
+  var progressText = document.getElementById('progressText');
+  var barFill = document.getElementById('barFill');
+  var paletteEl = document.getElementById('palette');
+  var qlistEl = document.getElementById('qlist');
+  var submitBtn = document.getElementById('submitBtn');
+  var finalCount = document.getElementById('finalCount');
+
+  function fmtTime(s){
+    var m = Math.floor(s/60);
+    var sec = s % 60;
+    return (m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+  }
+
+  function buildPalette(){
+    paletteEl.innerHTML = '';
+    DATA.forEach(function(q, i){
+      var cell = document.createElement('div');
+      cell.className = 'pcell';
+      cell.textContent = (i+1);
+      cell.addEventListener('click', function(){
+        var block = document.getElementById('q-' + i);
+        if(block){ block.scrollIntoView({behavior:'smooth', block:'start'}); }
+      });
+      paletteEl.appendChild(cell);
+    });
+  }
+
+  function refreshPalette(){
+    var cells = paletteEl.children;
+    for(var i=0;i<cells.length;i++){
+      cells[i].classList.toggle('answered', state.answers[i] !== null);
+    }
+  }
+
+  function buildQuestionList(){
+    qlistEl.innerHTML = '';
+    DATA.forEach(function(q, i){
+      var block = document.createElement('div');
+      block.className = 'qblock';
+      block.id = 'q-' + i;
+
+      var numEl = document.createElement('div');
+      numEl.className = 'qnum';
+      numEl.textContent = 'Question ' + (i+1) + ' of ' + DATA.length;
+
+      var textEl = document.createElement('p');
+      textEl.className = 'qtext';
+      textEl.textContent = q.q;
+
+      var optsWrap = document.createElement('div');
+
+      q.opts.forEach(function(opt, oi){
+        var label = document.createElement('label');
+        label.className = 'opt';
+        label.innerHTML =
+          '<input type="radio" name="q' + i + '">' +
+          '<span class="letter">' + LETTERS[oi] + '.</span>' +
+          '<span>' + opt + '</span>';
+        label.addEventListener('click', function(){
+          selectAnswer(i, oi, block);
+        });
+        optsWrap.appendChild(label);
+      });
+
+      block.appendChild(numEl);
+      block.appendChild(textEl);
+      block.appendChild(optsWrap);
+      qlistEl.appendChild(block);
+    });
+  }
+
+  function selectAnswer(qIndex, optIndex, block){
+    state.answers[qIndex] = optIndex;
+    var opts = block.querySelectorAll('.opt');
+    opts.forEach(function(o, oi){
+      o.classList.toggle('selected', oi === optIndex);
+      var input = o.querySelector('input');
+      input.checked = (oi === optIndex);
+    });
+    block.classList.add('answered');
+    refreshPalette();
+    updateProgress();
+
+    // auto-advance: scroll smoothly to the next question, if any
+    var next = document.getElementById('q-' + (qIndex + 1));
+    if(next){
+      setTimeout(function(){
+        next.scrollIntoView({behavior:'smooth', block:'start'});
+      }, 220);
+    } else {
+      setTimeout(function(){
+        document.getElementById('submitPanel').scrollIntoView({behavior:'smooth', block:'start'});
+      }, 220);
+    }
+  }
+
+  function updateProgress(){
+    var answered = state.answers.filter(function(a){return a!==null;}).length;
+    progressText.textContent = answered + ' of ' + DATA.length + ' answered';
+    barFill.style.width = ((answered / DATA.length) * 100) + '%';
+    finalCount.textContent = answered === DATA.length
+      ? 'All 100 questions answered. Ready to submit.'
+      : (DATA.length - answered) + ' question(s) still unanswered.';
+  }
+
+  function tick(){
+    state.remaining--;
+    timerEl.textContent = fmtTime(Math.max(state.remaining,0));
+    timerEl.classList.toggle('low', state.remaining <= 300);
+    if(state.remaining <= 0){
+      finishExam(true);
+    }
+  }
+
+  function startExam(){
+    state.started = true;
+    startScreen.style.display = 'none';
+    quizScreen.style.display = 'block';
+    buildPalette();
+    buildQuestionList();
+    updateProgress();
+    timerEl.textContent = fmtTime(state.remaining);
+    state.timerHandle = setInterval(tick, 1000);
+  }
+
+  function finishExam(auto){
+    if(state.finished) return;
+    if(!auto){
+      var unanswered = state.answers.filter(function(a){return a===null;}).length;
+      if(unanswered > 0){
+        var ok = confirm('You have ' + unanswered + ' unanswered question(s). Submit anyway?');
+        if(!ok){ return; }
+      }
+    }
+    state.finished = true;
+    clearInterval(state.timerHandle);
+    quizScreen.style.display = 'none';
+    showResults(auto);
+  }
+
+  function showResults(timedOut){
+    resultsScreen.style.display = 'block';
+    var correctCount = 0, incorrectCount = 0, skippedCount = 0;
+    var reviewList = document.getElementById('reviewList');
+    reviewList.innerHTML = '';
+
+    DATA.forEach(function(q, i){
+      var given = state.answers[i];
+      var status;
+      if(given === null){ status = 'skipped'; skippedCount++; }
+      else if(given === q.correct){ status = 'correct'; correctCount++; }
+      else { status = 'incorrect'; incorrectCount++; }
+
+      var item = document.createElement('div');
+      item.className = 'reviewItem ' + status;
+      item.dataset.status = status;
+
+      var tagHtml = '<span class="tag ' + status + '">' + status + '</span>';
+      var yourLine = given === null
+        ? '<div class="rline">You did not answer this question.</div>'
+        : '<div class="rline your">Your answer: ' + LETTERS[given] + '. ' + q.opts[given] + '</div>';
+      var correctLine = (status === 'incorrect' || status === 'skipped')
+        ? '<div class="rline correctline">Correct answer: ' + LETTERS[q.correct] + '. ' + q.opts[q.correct] + '</div>'
+        : '<div class="rline correctline">Correct — ' + LETTERS[q.correct] + '. ' + q.opts[q.correct] + '</div>';
+
+      item.innerHTML =
+        '<p class="rq">' + tagHtml + (i+1) + '. ' + q.q + '</p>' +
+        yourLine + correctLine +
+        '<div class="rexpl"><strong>Why:</strong> ' + q.expl + '</div>';
+      reviewList.appendChild(item);
+    });
+
+    var pct = Math.round((correctCount / DATA.length) * 100);
+    document.getElementById('scoreCircle').textContent = pct + '%';
+    document.getElementById('scoreHeadline').textContent = correctCount + ' / ' + DATA.length + ' correct';
+    document.getElementById('scoreSub').textContent =
+      (timedOut ? 'Time expired — exam auto-submitted. ' : 'Submitted manually. ') +
+      correctCount + ' correct, ' + incorrectCount + ' incorrect, ' + skippedCount + ' unanswered.';
+
+    var filterBtns = document.querySelectorAll('.filterBtn');
+    filterBtns.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        filterBtns.forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var f = btn.dataset.filter;
+        document.querySelectorAll('.reviewItem').forEach(function(el){
+          el.style.display = (f === 'all' || el.dataset.status === f) ? '' : 'none';
+        });
+      });
+    });
+
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  startBtn.addEventListener('click', startExam);
+  submitBtn.addEventListener('click', function(){ finishExam(false); });
+
+  window.addEventListener('beforeunload', function(e){
+    if(state.started && !state.finished){
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+})();
+
+</script>
+</body>
+</html>
